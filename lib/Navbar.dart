@@ -1,0 +1,155 @@
+import 'package:flutter/material.dart';
+import 'package:twitter/inheritance/app_style.dart';
+import 'package:twitter/utils/box_constants.dart';
+import 'package:twitter/utils/constants.dart';
+import 'package:twitter/utils/theme_utils.dart';
+import 'package:twitter/widget/box.dart';
+import 'package:twitter/widget/profile_photo_widget.dart';
+
+class Navbar extends StatelessWidget {
+  const Navbar({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final navbarWidth = MediaQuery.of(context).size.width * 0.8;
+    final name = Constants.USER.name;
+    final username = Constants.USER.username;
+
+    return Container(
+      width: navbarWidth,
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          SizedBox(
+            height: 220, // For settting drawer height
+            child: DrawerHeader(
+              decoration: const BoxDecoration(
+                color: Colors.black,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text('Hesap bilgileri',
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+                      const Spacer(),
+                      IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: const Icon(Icons.close, color: Colors.white)),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      // CircleAvatar(radius: 25, backgroundImage: null),
+                      CustomCircleAvatar(
+                        photoUrl: Constants.USER.profilePhoto,
+                        radius: 25,
+                      ),
+                      Spacer(),
+                      Icon(Icons.add, color: Colors.white)
+                    ],
+                  ),
+                  Box(size: BoxSize.EXTRASMALL, type: BoxType.VERTICAL),
+                  Text(name, style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+                  Text('@$username', style: Theme.of(context).textTheme.titleMedium),
+                  Box(size: BoxSize.EXTRASMALL, type: BoxType.VERTICAL),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('${Constants.USER.following.length} Takip Edilen'),
+                      SizedBox(width: 10),
+                      Text('${Constants.USER.followers.length} Takipçi'),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          ListTile(
+            title: const Text('Profil'),
+            leading: const Icon(Icons.person_outlined, color: Colors.white),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.pushNamed(context, '/profile');
+            },
+          ),
+          ListTile(
+            title: const Text('Twitter Blue'),
+            leading: const Icon(Icons.book, color: Colors.white),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            title: const Text('Listeler'),
+            leading: const Icon(Icons.list_alt_outlined, color: Colors.white),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            title: const Text('Yer işaretleri'),
+            leading: const Icon(Icons.bookmark_outline, color: Colors.white),
+            onTap: () {
+              // Navigator.pushNamed(context, )
+              Navigator.pop(context);
+            },
+          ),
+          Divider(color: CustomColors.lightGray),
+          const ExpansionTile(
+            title: Text(
+              'İçerik Üreticisi Stüdyosu',
+              style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
+            ),
+            children: <Widget>[
+              ListTile(
+                title: Text(
+                  'item 1',
+                  style: TextStyle(fontWeight: FontWeight.w700),
+                ),
+              )
+            ],
+          ),
+          const ExpansionTile(
+            title: Text(
+              'Profesyonel Araçlar',
+              style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
+            ),
+            children: <Widget>[
+              ListTile(
+                title: Text(
+                  'item 1',
+                  style: TextStyle(fontWeight: FontWeight.w700),
+                ),
+              )
+            ],
+          ),
+          const ExpansionTile(
+            title: Text(
+              'Ayarlar ve destek',
+              style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
+            ),
+            children: <Widget>[
+              ListTile(
+                title: Text(
+                  'item 1',
+                  style: TextStyle(fontWeight: FontWeight.w700),
+                ),
+              )
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// enum Pages {
+//   home,
+//   search,
+//   notifications,
+//   message,
+// }
