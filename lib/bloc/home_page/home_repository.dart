@@ -1,13 +1,12 @@
-// ignore_for_file: non_constant_identifier_names
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../../inheritance/mixin_tweet_feature.dart';
+import '../../service_locator.dart';
 import '../../utils/resource.dart';
 
-class HomeRepository {
-  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-  final FirebaseStorage storage = FirebaseStorage.instance;
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+class HomeRepository with MixinTweetFeature {
+  FirebaseAuth firebaseAuth = locator.get<FirebaseAuth>();
 
   Future<Resource<String>> getProfilePhotoUrl(String userId) async {
     try {

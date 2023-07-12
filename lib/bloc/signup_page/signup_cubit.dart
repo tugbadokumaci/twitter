@@ -6,11 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twitter/bloc/signup_page/signup_state.dart';
 import 'package:twitter/bloc/signup_page/signup_repository.dart';
-import 'package:intl/intl.dart';
-
-import '../../utils/constants.dart';
 import '../../utils/resource.dart';
-import '../../utils/utils.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class SignupCubit extends Cubit<SignupState> {
   final SignupRepository _repo;
@@ -29,42 +26,18 @@ class SignupCubit extends Cubit<SignupState> {
 
   bool isUsernameValid = true;
   Uint8List? imageData;
-  // List<int> image = [];
+
+  Resource<String> signupResource = Resource(status: Status.LOADING, data: null, errorMessage: null);
+  Resource<String> birthdayResource = Resource(status: Status.LOADING, data: null, errorMessage: null);
+
   Future<void> signUp(BuildContext context) async {
-    DateFormat _dateFormatWithDots = DateFormat('dd.MM.yyyy');
-    DateFormat _dateFormatWithoutDots = DateFormat('ddMMyyyy');
-    DateTime parsedDate;
-
-    try {
-      parsedDate = _dateFormatWithDots.parse(getBirthdayController.text);
-    } catch (e) {
-      // If parsing with dots fails, try parsing without dots
-      parsedDate = _dateFormatWithoutDots.parse(getBirthdayController.text);
-    }
-    String formattedDate = _dateFormatWithDots.format(parsedDate);
-
-    Resource<String> result =
-        await _repo.signUp(getEmailController.text, getPasswordController.text, getNameController.text, formattedDate);
-    if (result.status == Status.SUCCESS) {
-      // Utils.showCustomDialog(
-      //   context: context,
-      //   title: 'Sign up Success',
-      //   content: 'Sign up Success',
-      //   onTap: () {
-      //     Navigator.of(context).pop();
-      //     emit(SignupChoosePhoto());
-      //   },
-      // );
+    signupResource = await _repo.signUp(
+        getEmailController.text, getPasswordController.text, getNameController.text, birthdayResource.data!);
+    if (signupResource.status == Status.SUCCESS) {
+// toast sign up success
       emit(SignupChoosePhoto());
     } else {
-      Utils.showCustomDialog(
-        context: context,
-        title: 'Sign up Error',
-        content: result.errorMessage ?? 'invalid data try again',
-        onTap: () {
-          Navigator.of(context).pop();
-        },
-      );
+// toast sign up error
     }
   }
 
@@ -73,7 +46,56 @@ class SignupCubit extends Cubit<SignupState> {
   }
 
   Future<void> toStep2() async {
-    emit(SignupStep2());
+    birthdayResource = await _repo.checkBirthdayAvaliability(getBirthdayController.text);
+    if (getNameController.text == '') {
+      // name field cant be null
+      Fluttertoast.showToast(
+        msg: 'name field cant be null',
+        backgroundColor: Colors.red,
+        gravity: ToastGravity.TOP,
+      );
+      emit(SignupInitial());
+    } else {
+      if (getEmailController.text == '') {
+        // email field cant be null
+        Fluttertoast.showToast(
+          msg: 'email field cant be null',
+          backgroundColor: Colors.redAccent,
+          gravity: ToastGravity.TOP,
+        );
+
+        emit(SignupInitial());
+      } else {
+        if (getBirthdayController.text == '') {
+          // birthday field cant be null
+          Fluttertoast.showToast(
+            msg: ' birthday field cant be null',
+            backgroundColor: Colors.redAccent,
+            gravity: ToastGravity.TOP,
+          );
+
+          emit(SignupInitial());
+        } else if (birthdayResource.status == Status.ERROR) {
+          // birthday field is incorrect
+          Fluttertoast.showToast(
+            msg: 'birthday field is incorrect',
+            backgroundColor: Colors.redAccent,
+            gravity: ToastGravity.TOP,
+          );
+
+          emit(SignupInitial());
+        } else {
+          // sign up success
+          // Fluttertoast.showToast(
+          //   msg: ' sign up success',
+          //   backgroundColor: Colors.greenAccent,
+          //   gravity: ToastGravity.TOP,
+          // );
+
+          emit(SignupStep2());
+        }
+      }
+    }
   }
 
   Future<void> toStep3() async {

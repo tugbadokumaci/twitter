@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:twitter/bloc/login_page/login_repository.dart';
 
 import '../../models/user_model.dart';
@@ -30,37 +31,56 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future<void> toStep2() async {
-    emit(LoginStep2());
+    if (getEmailController.text == '') {
+      Fluttertoast.showToast(
+        msg: 'email field cant be null',
+        backgroundColor: Colors.redAccent,
+        gravity: ToastGravity.TOP,
+      );
+      emit(LoginInitial());
+    } else {
+      emit(LoginStep2());
+    }
   }
 
   Future<void> login(BuildContext context) async {
-    debugPrint('Login Clicked');
-    emit(LoginLoading());
-    final email = getEmailController.text;
-    final password = getPasswordController.text;
-
-    Resource<UserModel> resource = await _repo.logIn(email, password);
-
-    if (resource.status == Status.SUCCESS) {
-      Constants.USER = resource.data!;
-      await SharedPreferencesService.setStringPreference(email, password);
-      emit(LoginSuccess());
-      Utils.showCustomSnackbar(
-        context: context,
-        content: 'Welcome, ${Constants.USER.name}!',
+    if (getPasswordController.text == '') {
+      Fluttertoast.showToast(
+        msg: 'password field  cant be null',
+        backgroundColor: Colors.redAccent,
+        gravity: ToastGravity.TOP,
       );
-      Navigator.pushNamed(context, homeRoute);
+      emit(LoginStep2());
     } else {
-      emit(LoginForm());
-      Utils.showCustomDialog(
-        context: context,
-        title: 'Log in Error',
-        content: resource.errorMessage ?? '',
-        onTap: () {
-          Navigator.of(context).pop();
-          Navigator.pushNamed(context, '/welcome');
-        },
-      );
+      debugPrint('Login Clicked');
+      emit(LoginLoading());
+      final email = getEmailController.text;
+      final password = getPasswordController.text;
+
+      Resource<UserModel> resource = await _repo.logIn(email, password);
+
+      if (resource.status == Status.SUCCESS) {
+        Constants.USER = resource.data!;
+        await SharedPreferencesService.setStringPreference(email, password);
+        emit(LoginSuccess());
+        Fluttertoast.showToast(
+          msg: 'Log in Success',
+          backgroundColor: Colors.greenAccent,
+          gravity: ToastGravity.TOP,
+        );
+        Navigator.pushNamed(context, homeRoute);
+      } else {
+        emit(LoginForm());
+        Utils.showCustomDialog(
+          context: context,
+          title: 'Log in Error',
+          content: resource.errorMessage ?? '',
+          onTap: () {
+            Navigator.of(context).pop();
+            Navigator.pushNamed(context, '/logIn');
+          },
+        );
+      }
     }
   }
 }

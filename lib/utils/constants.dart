@@ -26,6 +26,7 @@ const String homeRoute = '/home';
 const String profileRoute = '/profile';
 const String editRoute = '/edit';
 const String tweetRoute = '/tweet';
+const String searchRoute = '/search';
 
 class ApiConstants {
   ApiConstants._();

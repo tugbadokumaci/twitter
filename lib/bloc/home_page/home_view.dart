@@ -1,11 +1,11 @@
-// ignore_for_file: prefer_const_constructors_in_immutables
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:twitter/BottomNavbar.dart';
 import 'package:twitter/bloc/home_page/home_cubit.dart';
 import 'package:twitter/bloc/home_page/home_state.dart';
 import 'package:twitter/utils/constants.dart';
+import 'package:twitter/widget/tweet_containers_utils.dart';
 
 import '../../Navbar.dart';
 import '../../utils/theme_utils.dart';
@@ -13,7 +13,7 @@ import '../../widget/profile_photo_widget.dart';
 
 class HomeView extends StatelessWidget {
   final HomeCubit viewModel;
-  HomeView({super.key, required this.viewModel});
+  const HomeView({Key? key, required this.viewModel}) : super(key: key);
 
   // final _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -55,27 +55,28 @@ class HomeView extends StatelessWidget {
           child: Image.asset('assets/images/new_tweet.png'),
         ),
       ),
-      drawer: Navbar(),
+      drawer: const Navbar(),
+      bottomNavigationBar: BottomNavbar(),
       body: SingleChildScrollView(
         child: BlocConsumer<HomeCubit, HomeState>(
           listener: (context, state) {
-            if (state is HomeInitial) {
-              // WidgetsBinding.instance.addPostFrameCallback((_) {
-              // viewModel.getProfilePhotoUrl();
-              // });
-            }
+            // if (state is HomeInitial) {
+            //   WidgetsBinding.instance.addPostFrameCallback((_) {
+            //     viewModel.getUserTweets();
+            //   });
+            // }
           },
           builder: (context, state) {
             debugPrint('Home view state: $state');
             if (state is HomeInitial) {
               return _buildInitial();
             } else if (state is HomeLoading) {
-              _buildLoading();
+              return _buildLoading();
             } else if (state is HomeSuccess) {
-              _buildSuccess();
+              return _buildSuccess();
+            } else if (state is HomeError) {
+              return _buildError();
             }
-            // }else if( state is HomeError){
-            // }
             return Container();
           },
         ),
@@ -84,12 +85,9 @@ class HomeView extends StatelessWidget {
   }
 
   Widget _buildInitial() {
+    viewModel.getUserTweets();
     return const Center(
-      child: Column(
-        children: [
-          // Alignment(child: Text('Home initial'), align),
-        ],
-      ),
+      child: Text('Home initial'),
     );
   }
 
@@ -97,19 +95,19 @@ class HomeView extends StatelessWidget {
     return const Center(
       child: Column(
         children: [
-          // Text('Home loading'),
+          Text('Home loading'),
         ],
       ),
     );
   }
 
   Widget _buildSuccess() {
+    return Center(child: tweetListViewContainer(resource: viewModel.tweetResource));
+  }
+
+  Widget _buildError() {
     return const Center(
-      child: Column(
-        children: [
-          // Text('Home success'),
-        ],
-      ),
+      child: Text('Error View'),
     );
   }
 }

@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import '../../models/user_model.dart';
+import '../../service_locator.dart';
 import '../../utils/resource.dart';
 
 class LoginRepository {
-  final firebaseAuth = FirebaseAuth.instance;
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  FirebaseFirestore firestore = locator.get<FirebaseFirestore>();
+  FirebaseAuth firebaseAuth = locator.get<FirebaseAuth>();
 
   Future<Resource<UserModel>> logIn(String email, String password) async {
     var userId = '';

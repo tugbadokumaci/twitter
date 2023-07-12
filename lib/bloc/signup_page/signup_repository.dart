@@ -1,4 +1,3 @@
-// ignore_for_file: non_constant_identifier_names
 import 'dart:typed_data';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,13 +5,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:twitter/utils/constants.dart';
+import '../../service_locator.dart';
 import '../../shared_preferences_service.dart';
 import '../../utils/resource.dart';
 
 class SignupRepository {
-  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-  final FirebaseStorage storage = FirebaseStorage.instance;
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  FirebaseStorage storage = locator.get<FirebaseStorage>();
+  FirebaseFirestore firestore = locator.get<FirebaseFirestore>();
+  FirebaseAuth firebaseAuth = locator.get<FirebaseAuth>();
 
   Future<Resource<String>> signUp(String email, String password, String name, String date) async {
     try {
@@ -125,6 +125,21 @@ class SignupRepository {
       return true;
     } catch (e) {
       return false;
+    }
+  }
+
+  Future<Resource<String>> checkBirthdayAvaliability(String? birthday) async {
+    if (birthday == null) {
+      return Resource.error('Birthday field cant be null');
+    } else {
+      DateFormat _dateFormatWithDots = DateFormat('dd.MM.yyyy');
+      DateTime parsedDate;
+      try {
+        parsedDate = _dateFormatWithDots.parse(birthday);
+        return Resource.success(_dateFormatWithDots.format(parsedDate));
+      } catch (e) {
+        return Resource.error('Error');
+      }
     }
   }
 }

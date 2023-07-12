@@ -11,6 +11,9 @@ import 'package:twitter/bloc/login_page/login_view.dart';
 import 'package:twitter/bloc/profile_page/profile_cubit.dart';
 import 'package:twitter/bloc/profile_page/profile_repository.dart';
 import 'package:twitter/bloc/profile_page/profile_view.dart';
+import 'package:twitter/bloc/search_page/search_cubit.dart';
+import 'package:twitter/bloc/search_page/search_repository.dart';
+import 'package:twitter/bloc/search_page/search_view.dart';
 import 'package:twitter/bloc/signup_page/signup_cubit.dart';
 import 'package:twitter/bloc/signup_page/signup_repository.dart';
 import 'package:twitter/bloc/signup_page/signup_view.dart';
@@ -69,6 +72,12 @@ class RouteGenerator {
             settings: settings,
             builder: (_) => TweetView(
                   viewModel: TweetCubit(repo: locator.get<TweetRepository>()),
+                ));
+      case searchRoute:
+        return MaterialPageRoute(
+            settings: settings,
+            builder: (_) => SearchView(
+                  viewModel: SearchCubit(repo: locator.get<SearchRepository>()),
                 ));
       default:
         return MaterialPageRoute(

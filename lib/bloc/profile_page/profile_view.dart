@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors_in_immutables
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twitter/bloc/profile_page/profile_cubit.dart';
@@ -7,14 +5,15 @@ import 'package:twitter/bloc/profile_page/profile_state.dart';
 import 'package:twitter/utils/button_utils.dart';
 import 'package:twitter/utils/constants.dart';
 import 'package:twitter/widget/profile_photo_widget.dart';
-
+import 'package:twitter/widget/tweet_containers_utils.dart';
 import '../../utils/box_constants.dart';
 import '../../utils/theme_utils.dart';
 import '../../widget/box.dart';
+import '../../widget/media_containers_utils.dart';
 
 class ProfileView extends StatelessWidget {
   final ProfileCubit viewModel;
-  ProfileView({super.key, required this.viewModel});
+  const ProfileView({super.key, required this.viewModel});
 
   @override
   Widget build(BuildContext context) {
@@ -33,11 +32,12 @@ class ProfileView extends StatelessWidget {
       ),
       backgroundColor: Colors.black,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, '/tweet');
+        onPressed: () async {
+          await Navigator.pushNamed(context, '/tweet');
+          viewModel.getUserProfile();
         },
         backgroundColor: CustomColors.blue,
-        child: Container(
+        child: SizedBox(
           width: 45, // Set the desired width
           height: 45, // Set the desired height
           child: Image.asset('assets/images/new_tweet.png'),
@@ -46,20 +46,27 @@ class ProfileView extends StatelessWidget {
       body: SingleChildScrollView(
         child: BlocConsumer<ProfileCubit, ProfileState>(
           listener: (context, state) {
-            if (state is ProfileInitial) {}
+            if (state is ProfileInitial) {
+              //   debugPrint('listener profileinitial ');
+              //   WidgetsBinding.instance.addPostFrameCallback((_) {
+              //     debugPrint('method invoked');
+              // viewModel.getUserTweets();
+              //   });
+              //   // devamlı cagırılıyor mu?
+            }
           },
           builder: (context, state) {
             debugPrint('Profile view state: $state');
             if (state is ProfileInitial) {
               return _buildInitial(context);
             }
-            //  else if (state is ProfileLoading) {
-            //   _buildLoading();
-            // } else if (state is HomeSuccess) {
-            //   _buildSuccess();
-            // }
-            // }else if( state is HomeError){
-            // }
+            if (state is ProfileLoading) {
+              return _buildLoading();
+            } else if (state is ProfileSuccess) {
+              return _buildSuccess(context);
+            } else if (state is ProfileError) {
+              return _buildError();
+            }
             return Container();
           },
         ),
@@ -68,6 +75,21 @@ class ProfileView extends StatelessWidget {
   }
 
   Widget _buildInitial(BuildContext context) {
+    viewModel.getUserProfile();
+    return const Center(
+      child: Text('profile initial'),
+    );
+  }
+
+  Widget _buildLoading() {
+    return Center(
+        child: CircularProgressIndicator(
+      color: CustomColors.blue,
+      backgroundColor: CustomColors.lightGray,
+    ));
+  }
+
+  Widget _buildSuccess(BuildContext context) {
     return Center(
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         _profileHeader(context),
@@ -85,10 +107,10 @@ class ProfileView extends StatelessWidget {
               Text((Constants.USER.bio == '' ? 'Biyografi bilgisi bulunmamaktadır.' : Constants.USER.bio)),
               const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
               Padding(
-                padding: EdgeInsets.only(bottom: 3.0),
+                padding: const EdgeInsets.only(bottom: 3.0),
                 child: Row(
                   children: [
-                    Icon(Icons.pin_drop, size: 20),
+                    const Icon(Icons.pin_drop, size: 20),
                     Text((Constants.USER.location == '' ? 'Konum bilgisi bulunmamaktadır.' : 'Konum, Konum'))
                   ],
                 ),
@@ -133,7 +155,7 @@ class ProfileView extends StatelessWidget {
                     Tab(text: 'Beğeni'),
                   ],
                 ),
-                const Expanded(
+                Expanded(
                   child: TabBarView(
                     children: [
                       tweetContainer(),
@@ -188,69 +210,45 @@ class ProfileView extends StatelessWidget {
       ),
     );
   }
-}
 
-class begeniContainer extends StatelessWidget {
-  const begeniContainer({
-    super.key,
-  });
+  Widget tweetContainer() {
+    if (viewModel.tweetResource.data == null) {
+      return const Center(child: Text('Atımış tweetiniz bulunmamaktadır.'));
+    }
+    return tweetListViewContainer(resource: viewModel.tweetResource);
+  }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget yanitlarContainer() {
     return Container(
       color: Colors.black,
+      child: const Center(child: Text('Yanıtınız bulunmamaktadır.')),
     );
   }
-}
 
-class medyaContainer extends StatelessWidget {
-  const medyaContainer({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  Widget oneCikanlarContainer() {
     return Container(
       color: Colors.black,
+      child: const Center(child: Text('One Cıkanlarınız bulunmamaktadır.')),
     );
   }
-}
 
-class oneCikanlarContainer extends StatelessWidget {
-  const oneCikanlarContainer({
-    super.key,
-  });
+  Widget medyaContainer() {
+    if (viewModel.mediaResource.data == null) {
+      return const Center(child: Text('Atımış tweetiniz bulunmamaktadır.'));
+    }
+    return mediaListViewContainer(viewModel.mediaResource);
+  }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget begeniContainer() {
     return Container(
       color: Colors.black,
+      child: const Center(child: Text('Begeniniz bulunmamaktadır.')),
     );
   }
-}
 
-class yanitlarContainer extends StatelessWidget {
-  const yanitlarContainer({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.black,
-    );
-  }
-}
-
-class tweetContainer extends StatelessWidget {
-  const tweetContainer({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.black,
+  Widget _buildError() {
+    return const Center(
+      child: Text('Profile Error'),
     );
   }
 }

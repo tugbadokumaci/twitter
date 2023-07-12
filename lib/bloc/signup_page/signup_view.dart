@@ -115,7 +115,7 @@ class _SignupViewState extends State<SignupView> {
             Text('Doğum Tarihi', style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold)),
             const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
             const Text(
-                'Bu, herkese açık olarak gösterilmeyecek. Bu hesap bir işletme, evcil hayvan veya başka bir şey için olsa bile kendi yaşını doğrulaman gerekir.'),
+                'Bu, herkese açık olarak gösterilmeyecek. Bu hesap bir işletme, evcil hayvan veya başka bir şey için olsa bile kendi yaşını doğrulaman gerekir. (Geçerli format dd.MM.yyyy)'),
             const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
             MyTextFieldWidget(
                 validatorCallback: ((value) {
