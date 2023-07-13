@@ -9,9 +9,7 @@ class UserListViewContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (resource.status == Status.LOADING) {
-      return LinearProgressIndicator();
-    } else if (resource.status == Status.SUCCESS) {
+    if (resource.status == Status.SUCCESS) {
       if (resource.data!.isNotEmpty) {
         return ListView.builder(
           scrollDirection: Axis.vertical,
@@ -34,8 +32,11 @@ class UserListViewContainer extends StatelessWidget {
             );
           },
         );
+      } else {
+        return const Text('No user found');
       }
     }
-    return const Text('User Resource is not SUCCESS state');
+    debugPrint('Users Containers retured ERROR STATE');
+    return Container();
   }
 }

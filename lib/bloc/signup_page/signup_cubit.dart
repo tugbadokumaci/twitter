@@ -27,8 +27,11 @@ class SignupCubit extends Cubit<SignupState> {
   bool isUsernameValid = true;
   Uint8List? imageData;
 
-  Resource<String> signupResource = Resource(status: Status.LOADING, data: null, errorMessage: null);
-  Resource<String> birthdayResource = Resource(status: Status.LOADING, data: null, errorMessage: null);
+  // Resource<String> signupResource = Resource(status: Status.LOADING, data: null, errorMessage: null);
+  // Resource<String> birthdayResource = Resource(status: Status.LOADING, data: null, errorMessage: null);
+
+  late Resource<String> signupResource;
+  late Resource<String> birthdayResource;
 
   Future<void> signUp(BuildContext context) async {
     signupResource = await _repo.signUp(

@@ -61,7 +61,7 @@ class MyApp extends StatelessWidget {
         colorScheme: const ColorScheme.light().copyWith(primary: Colors.white),
         bottomAppBarTheme: const BottomAppBarTheme(shape: CircularNotchedRectangle()),
         progressIndicatorTheme: ProgressIndicatorThemeData(color: CustomColors.blue),
-        iconTheme: IconThemeData(color: CustomColors.darkGray),
+        iconTheme: IconThemeData(color: CustomColors.lightGray),
         inputDecorationTheme: InputDecorationTheme(
           floatingLabelStyle: TextStyle(color: CustomColors.blue),
           // floatingLabelBehavior: FloatingLabelBehavior.always,

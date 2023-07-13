@@ -20,38 +20,12 @@ class ProfileView extends StatelessWidget {
   // }
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      viewModel.getUserProfile(userId);
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    viewModel.getUserProfile(userId);
+    // });
 
     return BlocProvider<ProfileCubit>(
-      create: (_) => viewModel,
-      child: _buildScaffold(context),
-    );
-  }
-
-  Widget _buildScaffold(BuildContext context) {
-    debugPrint('Scaffold is building:::: ');
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(viewModel.userModel.data!.name,
-            style: Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold)),
-        centerTitle: false,
-      ),
-      backgroundColor: Colors.black,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          await Navigator.pushNamed(context, '/tweet');
-          viewModel.getUserProfile(userId);
-        },
-        backgroundColor: CustomColors.blue,
-        child: SizedBox(
-          width: 45, // Set the desired width
-          height: 45, // Set the desired height
-          child: Image.asset('assets/images/new_tweet.png'),
-        ),
-      ),
-      body: SingleChildScrollView(
+        create: (_) => viewModel,
         child: BlocConsumer<ProfileCubit, ProfileState>(
           listener: (context, state) {
             if (state is ProfileInitial) {
@@ -63,124 +37,225 @@ class ProfileView extends StatelessWidget {
           builder: (context, state) {
             debugPrint('Profile view state: $state');
             if (state is ProfileInitial) {
-              return _buildInitial(context);
+              // return _buildInitial(context);
             }
             if (state is ProfileLoading) {
-              return _buildLoading();
+              return _buildLoading(context);
             } else if (state is ProfileSuccess) {
               return _buildSuccess(context);
             } else if (state is ProfileError) {
-              return _buildError();
+              return _buildError(context);
             }
             return Container();
           },
-        ),
-      ),
-    );
+        ));
   }
 
-  Widget _buildInitial(BuildContext context) {
-    // viewModel.getUserProfile(userId);
-    return const Center(
-      child: Text('profile initial'),
-    );
-  }
+  // Widget _buildScaffold(BuildContext context) {
+  //   return Scaffold(
+  //       appBar: AppBar(
+  //         title: Text(viewModel.userModel.data!.name,
+  //             style: Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold)),
+  //         centerTitle: false,
+  //       ),
+  //       backgroundColor: Colors.black,
+  //       floatingActionButton: FloatingActionButton(
+  //         onPressed: () async {
+  //           await Navigator.pushNamed(context, '/tweet');
+  //           viewModel.getUserProfile(userId);
+  //         },
+  //         backgroundColor: CustomColors.blue,
+  //         child: SizedBox(
+  //           width: 45, // Set the desired width
+  //           height: 45, // Set the desired height
+  //           child: Image.asset('assets/images/new_tweet.png'),
+  //         ),
+  //       ),
+  //       body: const Center(
+  //         child: Text('profile initial'),
+  //       ));
+  // }
 
-  Widget _buildLoading() {
-    return Center(
-        child: CircularProgressIndicator(
-      color: CustomColors.blue,
-      backgroundColor: CustomColors.lightGray,
-    ));
+  // Widget _buildInitial(BuildContext context) {
+  //   // viewModel.getUserProfile(userId);
+  //   return Scaffold(
+  //       appBar: AppBar(
+  //         title: Text(viewModel.userModel.data!.name,
+  //             style: Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold)),
+  //         centerTitle: false,
+  //       ),
+  //       backgroundColor: Colors.black,
+  //       floatingActionButton: FloatingActionButton(
+  //         onPressed: () async {
+  //           await Navigator.pushNamed(context, '/tweet');
+  //           viewModel.getUserProfile(userId);
+  //         },
+  //         backgroundColor: CustomColors.blue,
+  //         child: SizedBox(
+  //           width: 45, // Set the desired width
+  //           height: 45, // Set the desired height
+  //           child: Image.asset('assets/images/new_tweet.png'),
+  //         ),
+  //       ),
+  //       body: const Center(
+  //         child: Text('profile initial'),
+  //       ));
+  // }
+
+  Widget _buildLoading(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height,
+      child: Scaffold(
+          resizeToAvoidBottomInset: true,
+          // appBar: AppBar(
+          //   title: Text(viewModel.userModel.data!.name,
+          //       style: Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold)),
+          //   centerTitle: false,
+          // ),
+          backgroundColor: Colors.black,
+          floatingActionButton: FloatingActionButton(
+            onPressed: () async {
+              await Navigator.pushNamed(context, '/tweet');
+              viewModel.getUserProfile(userId);
+            },
+            backgroundColor: CustomColors.blue,
+            child: SizedBox(
+              width: 45, // Set the desired width
+              height: 45, // Set the desired height
+              child: Image.asset('assets/images/new_tweet.png'),
+            ),
+          ),
+          body: SingleChildScrollView(
+            child: Container(
+              height: MediaQuery.of(context).size.height,
+              child: Center(
+                child: LinearProgressIndicator(
+                  color: CustomColors.blue,
+                  backgroundColor: CustomColors.lightGray,
+                ),
+              ),
+            ),
+          )),
+    );
   }
 
   Widget _buildSuccess(BuildContext context) {
-    return Center(
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        _profileHeader(context),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(Constants.USER.name, style: Theme.of(context).textTheme.headlineSmall),
-              Text(
-                '@${viewModel.userModel.data!.username}',
-                style: Theme.of(context).textTheme.titleMedium!.copyWith(color: CustomColors.lightGray),
-              ),
-              const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
-              Text((viewModel.userModel.data!.bio == ''
-                  ? 'Biyografi bilgisi bulunmamaktadır.'
-                  : viewModel.userModel.data!.bio)),
-              const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 3.0),
-                child: Row(
-                  children: [
-                    const Icon(Icons.pin_drop, size: 20),
-                    Text((viewModel.userModel.data!.location == '' ? 'Konum bilgisi bulunmamaktadır.' : 'Konum, Konum'))
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 3.0),
-                child: Row(
-                  children: [const Icon(Icons.cake, size: 20), Text(viewModel.userModel.data!.birthday)],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 3.0),
-                child: Row(
-                  children: [
-                    const Icon(Icons.calendar_month, size: 20),
-                    Text(viewModel.userModel.data!.accountCreationDate)
-                  ],
-                ),
-              ),
-              const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
-              Row(
-                children: [
-                  Text('${viewModel.userModel.data!.following.length} Takip edilen'),
-                  const Box(size: BoxSize.MEDIUM, type: BoxType.HORIZONTAL),
-                  Text('${viewModel.userModel.data!.followers.length} Takipçi'),
-                ],
-              ),
-            ],
+    return Container(
+      height: MediaQuery.of(context).size.height,
+      child: Scaffold(
+          resizeToAvoidBottomInset: true,
+          appBar: AppBar(
+            title: Text(viewModel.userModel.data!.name,
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold)),
+            centerTitle: false,
           ),
-        ),
-        SizedBox(
-          height: MediaQuery.of(context).size.height * 0.5, // Half of the screen height
-          child: DefaultTabController(
-            length: 5, // Number of tabs
-            child: Column(
-              children: [
-                TabBar(
-                  isScrollable: true,
-                  indicatorColor: CustomColors.blue,
-                  tabs: const [
-                    Tab(text: 'Tweetler'),
-                    Tab(text: 'Yanıtlar'),
-                    Tab(text: 'Öne Çıkanlar'),
-                    Tab(text: 'Medya'),
-                    Tab(text: 'Beğeni'),
-                  ],
-                ),
-                Expanded(
-                  child: TabBarView(
-                    children: [
-                      tweetContainer(),
-                      yanitlarContainer(),
-                      oneCikanlarContainer(),
-                      medyaContainer(),
-                      begeniContainer(),
-                    ],
-                  ),
-                ),
-              ],
+          backgroundColor: Colors.black,
+          floatingActionButton: FloatingActionButton(
+            onPressed: () async {
+              await Navigator.pushNamed(context, '/tweet');
+              viewModel.getUserProfile(userId);
+            },
+            backgroundColor: CustomColors.blue,
+            child: SizedBox(
+              width: 45, // Set the desired width
+              height: 45, // Set the desired height
+              child: Image.asset('assets/images/new_tweet.png'),
             ),
           ),
-        ),
-      ]),
+          body: SingleChildScrollView(
+            child: Container(
+              height: MediaQuery.of(context).size.height,
+              child: Center(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  _profileHeader(context),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(Constants.USER.name, style: Theme.of(context).textTheme.headlineSmall),
+                        Text(
+                          '@${viewModel.userModel.data!.username}',
+                          style: Theme.of(context).textTheme.titleMedium!.copyWith(color: CustomColors.lightGray),
+                        ),
+                        const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
+                        Text((viewModel.userModel.data!.bio == ''
+                            ? 'Biyografi bilgisi bulunmamaktadır.'
+                            : viewModel.userModel.data!.bio)),
+                        const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 3.0),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.pin_drop, size: 20),
+                              Text((viewModel.userModel.data!.location == ''
+                                  ? 'Konum bilgisi bulunmamaktadır.'
+                                  : 'Konum, Konum'))
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 3.0),
+                          child: Row(
+                            children: [const Icon(Icons.cake, size: 20), Text(viewModel.userModel.data!.birthday)],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 3.0),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.calendar_month, size: 20),
+                              Text(viewModel.userModel.data!.accountCreationDate)
+                            ],
+                          ),
+                        ),
+                        const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
+                        Row(
+                          children: [
+                            Text('${viewModel.userModel.data!.following.length} Takip edilen'),
+                            const Box(size: BoxSize.MEDIUM, type: BoxType.HORIZONTAL),
+                            Text('${viewModel.userModel.data!.followers.length} Takipçi'),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.5, // Half of the screen height
+                    child: DefaultTabController(
+                      length: 5, // Number of tabs
+                      child: Column(
+                        children: [
+                          TabBar(
+                            isScrollable: true,
+                            indicatorColor: CustomColors.blue,
+                            tabs: const [
+                              Tab(text: 'Tweetler'),
+                              Tab(text: 'Yanıtlar'),
+                              Tab(text: 'Öne Çıkanlar'),
+                              Tab(text: 'Medya'),
+                              Tab(text: 'Beğeni'),
+                            ],
+                          ),
+                          Expanded(
+                            child: TabBarView(
+                              children: [
+                                tweetContainer(),
+                                yanitlarContainer(),
+                                oneCikanlarContainer(),
+                                medyaContainer(),
+                                begeniContainer(),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ]),
+              ),
+            ),
+          )),
     );
   }
 
@@ -206,17 +281,29 @@ class ProfileView extends StatelessWidget {
               child: CustomCircleAvatar(photoUrl: viewModel.userModel.data!.profilePhoto, radius: 40)),
           Align(
             alignment: const Alignment(0.9, 1.3),
-            child: MyButtonWidget(
-              onPressed: () {
-                Navigator.pushNamed(context, '/edit');
-              },
-              buttonColor: Colors.transparent,
-              content: const Text('Profili Düzenle'),
-              context: context,
-              height: 30,
-              width: 100,
-              borderColor: Colors.white,
-            ),
+            child: (viewModel.userModel.data!.userId == Constants.USER.userId)
+                ? MyButtonWidget(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/edit');
+                    },
+                    buttonColor: Colors.transparent,
+                    content: const Text('Profili Düzenle'),
+                    context: context,
+                    height: 30,
+                    width: 100,
+                    borderColor: Colors.white,
+                  )
+                : MyButtonWidget(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/edit');
+                    },
+                    buttonColor: Colors.transparent,
+                    content: const Text('Takip et'),
+                    context: context,
+                    height: 30,
+                    width: 100,
+                    borderColor: Colors.white,
+                  ),
           ),
         ],
       ),
@@ -227,9 +314,12 @@ class ProfileView extends StatelessWidget {
     if (viewModel.tweetResource.data == null) {
       return const Center(child: Text('Atımış tweetiniz bulunmamaktadır.'));
     }
-    return TweetListViewContainer(
-      resource: viewModel.tweetResource,
-      userModel: viewModel.userModel.data!,
+    return SizedBox(
+      height: 600,
+      child: TweetListViewContainer(
+        resource: viewModel.tweetResource,
+        userModel: viewModel.userModel.data!,
+      ),
     );
   }
 
@@ -261,9 +351,12 @@ class ProfileView extends StatelessWidget {
     );
   }
 
-  Widget _buildError() {
-    return const Center(
-      child: Text('Profile Error'),
-    );
+  Widget _buildError(BuildContext context) {
+    return Container(
+        height: MediaQuery.of(context).size.height,
+        child: Scaffold(
+            body: Center(
+          child: Text('Profile Error'),
+        )));
   }
 }

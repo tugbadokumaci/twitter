@@ -13,32 +13,34 @@ class SearchCubit extends Cubit<SearchState> {
         super(SearchInitial());
 
   TextEditingController searchController = TextEditingController();
-  Resource<List<UserModel>> userResource = Resource(status: Status.LOADING, data: null, errorMessage: null);
-  Resource<List<UserModel>> allUserResource = Resource(status: Status.LOADING, data: null, errorMessage: null);
+  // Resource<List<UserModel>> userResource = Resource(status: Status.LOADING, data: null, errorMessage: null);
+  // Resource<List<UserModel>> allUserResource = Resource(status: Status.LOADING, data: null, errorMessage: null);
+
+  late Resource<List<UserModel>> userResource;
 
   Future<void> searchUsers(String value) async {
     emit(SearchLoading());
-    userResource = await _repo.searchByUsername(searchController.text);
-    if (userResource.status == Status.SUCCESS) {
-      if (searchController.text == '') {
-        emit(SearchInitial());
-      } else {
-        emit(SearchSuccess());
-      }
+
+    if (searchController.text == '') {
+      userResource = await _repo.getAllUsername();
+      emit(SearchSuccess(userResource: userResource));
     } else {
-      debugPrint(userResource.errorMessage);
-      debugPrint('search cubit -> searchUsers -> userResource status ERROR');
+      userResource = await _repo.searchByUsername(searchController.text);
+      emit(SearchSuccess(userResource: userResource));
+
+      // debugPrint(userResource.errorMessage);
+      // debugPrint('search cubit -> searchUsers -> userResource status ERROR');
     }
   }
 
   Future<void> getAllUsername() async {
-    allUserResource = await _repo.getAllUsername();
+    userResource = await _repo.getAllUsername();
 
-    if (allUserResource.status == Status.SUCCESS) {
-      emit(SearchInitial());
+    if (userResource.status == Status.SUCCESS) {
+      emit(SearchSuccess(userResource: userResource));
     } else {
-      debugPrint(allUserResource.errorMessage);
-      debugPrint('search cubit -> getAllUsername -> allUserResource status ERROR');
+      debugPrint(userResource.errorMessage);
+      debugPrint('search cubit -> getAllUsername -> userResource status ERROR');
     }
   }
 }

@@ -9,8 +9,8 @@ import '../../utils/resource.dart';
 class HomeCubit extends Cubit<HomeState> {
   final HomeRepository _repo;
 
-  Resource<List<TweetModel>> tweetResource = Resource(status: Status.LOADING, data: null, errorMessage: null);
-
+  // Resource<List<TweetModel>> tweetResource = Resource(status: Status.LOADING, data: null, errorMessage: null);
+  late Resource<List<TweetModel>> tweetResource;
   HomeCubit({
     required HomeRepository repo,
   })  : _repo = repo,
@@ -21,7 +21,7 @@ class HomeCubit extends Cubit<HomeState> {
     tweetResource = await _repo.getTweetsByUserId(userId);
 
     if (tweetResource.status == Status.SUCCESS) {
-      emit(HomeSuccess());
+      emit(HomeSuccess(tweetResource: tweetResource));
     } else {
       debugPrint('Home Cubit - getUserTweets - resource1 error ');
       emit(HomeError());

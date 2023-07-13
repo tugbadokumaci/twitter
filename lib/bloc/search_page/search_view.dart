@@ -69,20 +69,20 @@ class SearchView extends StatelessWidget {
       body: SingleChildScrollView(
         child: BlocConsumer<SearchCubit, SearchState>(
           listener: (context, state) {
-            // if (state is SearchInitial) {
-            //   WidgetsBinding.instance.addPostFrameCallback((_) {
-            //     viewModel.getUserTweets();
-            //   });
-            // }
+            if (state is SearchInitial) {
+              // WidgetsBinding.instance.addPostFrameCallback((_) {
+              //   viewModel.getAllUsername('');
+              // });
+            }
           },
           builder: (context, state) {
             debugPrint('Search view state: $state');
             if (state is SearchInitial) {
-              return _buildInitial(context);
+              // return _buildInitial(context);
             } else if (state is SearchLoading) {
               return _buildLoading();
             } else if (state is SearchSuccess) {
-              return _buildSuccess();
+              return _buildSuccess(state);
             }
 
             return Container();
@@ -92,19 +92,19 @@ class SearchView extends StatelessWidget {
     ));
   }
 
-  Widget _buildInitial(BuildContext context) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            const SizedBox(height: 30),
-            UserListViewContainer(resource: viewModel.allUserResource),
-          ],
-        ),
-      ),
-    );
-  }
+  // Widget _buildInitial(BuildContext context) {
+  //   return SafeArea(
+  //     child: Padding(
+  //       padding: const EdgeInsets.all(8.0),
+  //       child: Column(
+  //         children: [
+  //           const SizedBox(height: 30),
+  //           UserListViewContainer(resource: viewModel.allUserResource),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   InputDecoration customInputDecoration() {
     return InputDecoration(
@@ -135,11 +135,11 @@ class SearchView extends StatelessWidget {
     ));
   }
 
-  SafeArea _buildSuccess() {
+  SafeArea _buildSuccess(SearchSuccess state) {
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: UserListViewContainer(resource: viewModel.userResource),
+        child: UserListViewContainer(resource: state.userResource),
       ),
     );
   }

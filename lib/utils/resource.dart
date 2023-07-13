@@ -15,17 +15,12 @@ class Resource<T> {
     return Resource(status: Status.SUCCESS, data: data, errorMessage: null);
   }
 
-  static Resource<T> loading<T>() {
-    return Resource(status: Status.LOADING, data: null, errorMessage: null);
-  }
-
   static Resource<T> error<T>(String message) {
     return Resource(status: Status.ERROR, data: null, errorMessage: message);
   }
 }
 
 enum Status {
-  LOADING,
   SUCCESS,
   ERROR,
 }

@@ -61,10 +61,14 @@ mixin MixinTweetFeature {
 
         final String tweetId = doc.id;
         final String imageFileName = 'tweet_image_$tweetId.jpg';
-
-        final ref = storage.ref().child(imageFileName);
-        final url = await ref.getDownloadURL();
-        final imageData = await ref.getData();
+        Uint8List? imageData;
+        try {
+          final ref = storage.ref().child(imageFileName);
+          final url = await ref.getDownloadURL();
+          imageData = await ref.getData();
+        } catch (e) {
+          debugPrint('tweet without an image');
+        }
 
         TweetModel tweet = TweetModel(
           date: doc['date'].toString(), // data comes in datetime
