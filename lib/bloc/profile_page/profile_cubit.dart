@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twitter/bloc/profile_page/profile_state.dart';
 import 'package:twitter/bloc/profile_page/profile_repository.dart';
 import 'package:twitter/models/tweet_model.dart';
+import 'package:twitter/models/user_model.dart';
 import 'package:twitter/utils/resource.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
@@ -15,19 +16,26 @@ class ProfileCubit extends Cubit<ProfileState> {
         super(ProfileInitial());
   Resource<List<TweetModel>> tweetResource = Resource(status: Status.LOADING, data: null, errorMessage: null);
   Resource<List<Uint8List>> mediaResource = Resource(status: Status.LOADING, data: null, errorMessage: null);
+  // Resource<UserModel> userModel = Resource(status: Status.LOADING, data: null, errorMessage: null);
 
-  Future<void> getUserProfile() async {
+  late Resource<UserModel> userModel;
+
+  Future<void> getUserProfile(String userId) async {
     debugPrint('get user tweet invoked');
     emit(ProfileLoading());
-    final result = await _repo.getUserTweets();
-    final result2 = await _repo.getUserImages();
+    tweetResource = await _repo.getTweetsByUserId(userId);
+    mediaResource = await _repo.getUserImages(userId);
+    userModel = await _repo.getUserModelById(userId);
 
-    if (result.status == Status.SUCCESS && result2.status == Status.SUCCESS) {
-      tweetResource.data = result.data;
-      mediaResource.data = result2.data;
-      emit(ProfileSuccess());
+    if (tweetResource.status == Status.SUCCESS &&
+        mediaResource.status == Status.SUCCESS &&
+        userModel.status == Status.SUCCESS) {
+      // tweetResource.data = tweetResource.data;
+      // mediaResource.data = mediaResource.data;
+      // userModel.data = userModel.data;
+      // emit(ProfileSuccess());
     } else {
-      debugPrint('Profile Cubit - getUserTweets - resource1 error ');
+      debugPrint('Profile Cubit - getUserProfile - resource1 error ');
       emit(ProfileError());
     }
   }

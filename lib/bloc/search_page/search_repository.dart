@@ -18,7 +18,7 @@ class SearchRepository {
         for (var i = 0; i < querySnapshotList.length; i++) {
           final data = querySnapshotList[i].data() as Map<String, dynamic>;
           list.add(UserModel(
-            email: data?['email'],
+            email: data['email'],
             password: data['password'],
             userId: querySnapshotList[i].id,
             name: data['name'],
@@ -27,9 +27,9 @@ class SearchRepository {
             accountCreationDate: data['accountCreationDate'],
             bio: data['bio'],
             profilePhoto: data['profilePhoto'],
-            followers: List<String>.from(data['followers']),
-            following: List<String>.from(data['following']),
-            tweets: List<String>.from(data['tweets']),
+            followers: (data['followers'] ?? []).cast<String>(),
+            following: (data['following'] ?? []).cast<String>(),
+            tweets: (data['tweets'] ?? []).cast<String>(),
             location: data['location'],
           ));
         }
@@ -41,20 +41,19 @@ class SearchRepository {
     }
   }
 
-  Future<Resource<List<UserModel>>> getAllUsername(String username) async {
+  Future<Resource<List<UserModel>>> getAllUsername() async {
     List<UserModel> list = [];
     try {
       final querySnapshot = await firestore
           .collection('users')
           .orderBy("username")
-          .where("username", isNotEqualTo: Constants.USER.username)
-          .get();
+          .where("username", isNotEqualTo: [Constants.USER.username]).get();
       if (querySnapshot.docs.isNotEmpty) {
         final querySnapshotList = querySnapshot.docs;
         for (var i = 0; i < querySnapshotList.length; i++) {
-          final data = querySnapshotList[i].data() as Map<String, dynamic>;
+          final data = querySnapshotList[i].data();
           list.add(UserModel(
-            email: data?['email'],
+            email: data['email'],
             password: data['password'],
             userId: querySnapshotList[i].id,
             name: data['name'],
@@ -63,16 +62,16 @@ class SearchRepository {
             accountCreationDate: data['accountCreationDate'],
             bio: data['bio'],
             profilePhoto: data['profilePhoto'],
-            followers: List<String>.from(data['followers']),
-            following: List<String>.from(data['following']),
-            tweets: List<String>.from(data['tweets']),
+            followers: (data['followers'] ?? []).cast<String>(),
+            following: (data['following'] ?? []).cast<String>(),
+            tweets: (data['tweets'] ?? []).cast<String>(),
             location: data['location'],
           ));
         }
       }
       return Resource.success(list);
     } catch (e) {
-      debugPrint('Exception - Add Repository - searchByEmail --> $e');
+      debugPrint('Exception -  SearchRepository - getAllUsername --> $e');
       return Resource.error('Error while searching by username');
     }
   }

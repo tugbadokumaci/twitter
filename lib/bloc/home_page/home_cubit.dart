@@ -16,13 +16,11 @@ class HomeCubit extends Cubit<HomeState> {
   })  : _repo = repo,
         super(HomeInitial());
 
-  Future<void> getUserTweets() async {
-    debugPrint('get user tweet invoked');
+  Future<void> getTweetsByUserId(String userId) async {
     emit(HomeLoading());
-    final result = await _repo.getUserTweets();
+    tweetResource = await _repo.getTweetsByUserId(userId);
 
-    if (result.status == Status.SUCCESS) {
-      tweetResource.data = result.data;
+    if (tweetResource.status == Status.SUCCESS) {
       emit(HomeSuccess());
     } else {
       debugPrint('Home Cubit - getUserTweets - resource1 error ');

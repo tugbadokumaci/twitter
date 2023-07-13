@@ -32,10 +32,10 @@ class SignupRepository {
         'bio': '',
         'username': '',
         'profilePhoto': '',
-        'followers': [],
-        'following': [],
+        'followers': [''],
+        'following': [''],
         'location': '',
-        'tweets': [],
+        'tweets': [''],
       });
       // await FirebaseFirestore.instance.collection('tweets').doc(uid).set({
       //   'favList': [],

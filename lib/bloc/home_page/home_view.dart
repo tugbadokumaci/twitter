@@ -19,6 +19,7 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    viewModel.getTweetsByUserId(Constants.USER.userId);
     return BlocProvider<HomeCubit>(
       create: (_) => viewModel,
       child: _buildScaffold(context),
@@ -26,6 +27,8 @@ class HomeView extends StatelessWidget {
   }
 
   SafeArea _buildScaffold(BuildContext context) {
+    // viewModel.getTweetsByUserId(Constants.USER.userId);
+
     return SafeArea(
         child: Scaffold(
       // key: _scaffoldKey,
@@ -37,7 +40,7 @@ class HomeView extends StatelessWidget {
               onTap: () {
                 Scaffold.of(ctx).openDrawer(); // Open the drawer
               },
-              child: CustomCircleAvatar(photoUrl: Constants.USER.profilePhoto, radius: 40),
+              child: CustomCircleAvatar(photoUrl: Constants.USER.profilePhoto),
             );
           },
         ),
@@ -61,8 +64,8 @@ class HomeView extends StatelessWidget {
         child: BlocConsumer<HomeCubit, HomeState>(
           listener: (context, state) {
             // if (state is HomeInitial) {
-            //   WidgetsBinding.instance.addPostFrameCallback((_) {
-            //     viewModel.getUserTweets();
+            //   WidgetsBinding.instance!.addPostFrameCallback((_) {
+            //     viewModel.getTweetsByUserId(Constants.USER.userId);
             //   });
             // }
           },
@@ -85,24 +88,28 @@ class HomeView extends StatelessWidget {
   }
 
   Widget _buildInitial() {
-    viewModel.getUserTweets();
     return const Center(
       child: Text('Home initial'),
     );
   }
 
   Widget _buildLoading() {
-    return const Center(
-      child: Column(
-        children: [
-          Text('Home loading'),
-        ],
-      ),
-    );
+    debugPrint('state is loading');
+    return Center(
+        child: LinearProgressIndicator(
+      color: CustomColors.blue,
+      backgroundColor: CustomColors.lightGray,
+    ));
   }
 
   Widget _buildSuccess() {
-    return Center(child: tweetListViewContainer(resource: viewModel.tweetResource));
+    debugPrint('_buildSuccess is working !! viewModel.tweetResource: ${viewModel.tweetResource.status}');
+    debugPrint(viewModel.tweetResource.data.toString());
+    return Center(
+        child: TweetListViewContainer(
+      resource: viewModel.tweetResource,
+      userModel: Constants.USER,
+    ));
   }
 
   Widget _buildError() {

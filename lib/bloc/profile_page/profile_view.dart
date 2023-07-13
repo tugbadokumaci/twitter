@@ -12,11 +12,18 @@ import '../../widget/box.dart';
 import '../../widget/media_containers_utils.dart';
 
 class ProfileView extends StatelessWidget {
+  final String userId;
   final ProfileCubit viewModel;
-  const ProfileView({super.key, required this.viewModel});
-
+  const ProfileView({super.key, required this.viewModel, required this.userId});
+  // ProfileView({Key? key, required this.viewModel, required this.userId}) : super(key: key) {
+  //   viewModel.getUserProfile(userId);
+  // }
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      viewModel.getUserProfile(userId);
+    });
+
     return BlocProvider<ProfileCubit>(
       create: (_) => viewModel,
       child: _buildScaffold(context),
@@ -24,9 +31,10 @@ class ProfileView extends StatelessWidget {
   }
 
   Widget _buildScaffold(BuildContext context) {
+    debugPrint('Scaffold is building:::: ');
     return Scaffold(
       appBar: AppBar(
-        title: Text(Constants.USER.name,
+        title: Text(viewModel.userModel.data!.name,
             style: Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold)),
         centerTitle: false,
       ),
@@ -34,7 +42,7 @@ class ProfileView extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           await Navigator.pushNamed(context, '/tweet');
-          viewModel.getUserProfile();
+          viewModel.getUserProfile(userId);
         },
         backgroundColor: CustomColors.blue,
         child: SizedBox(
@@ -47,12 +55,9 @@ class ProfileView extends StatelessWidget {
         child: BlocConsumer<ProfileCubit, ProfileState>(
           listener: (context, state) {
             if (state is ProfileInitial) {
-              //   debugPrint('listener profileinitial ');
-              //   WidgetsBinding.instance.addPostFrameCallback((_) {
-              //     debugPrint('method invoked');
-              // viewModel.getUserTweets();
-              //   });
-              //   // devamlı cagırılıyor mu?
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                viewModel.getUserProfile(userId);
+              });
             }
           },
           builder: (context, state) {
@@ -75,7 +80,7 @@ class ProfileView extends StatelessWidget {
   }
 
   Widget _buildInitial(BuildContext context) {
-    viewModel.getUserProfile();
+    // viewModel.getUserProfile(userId);
     return const Center(
       child: Text('profile initial'),
     );
@@ -100,39 +105,44 @@ class ProfileView extends StatelessWidget {
             children: [
               Text(Constants.USER.name, style: Theme.of(context).textTheme.headlineSmall),
               Text(
-                '@${Constants.USER.username}',
+                '@${viewModel.userModel.data!.username}',
                 style: Theme.of(context).textTheme.titleMedium!.copyWith(color: CustomColors.lightGray),
               ),
               const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
-              Text((Constants.USER.bio == '' ? 'Biyografi bilgisi bulunmamaktadır.' : Constants.USER.bio)),
+              Text((viewModel.userModel.data!.bio == ''
+                  ? 'Biyografi bilgisi bulunmamaktadır.'
+                  : viewModel.userModel.data!.bio)),
               const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
               Padding(
                 padding: const EdgeInsets.only(bottom: 3.0),
                 child: Row(
                   children: [
                     const Icon(Icons.pin_drop, size: 20),
-                    Text((Constants.USER.location == '' ? 'Konum bilgisi bulunmamaktadır.' : 'Konum, Konum'))
+                    Text((viewModel.userModel.data!.location == '' ? 'Konum bilgisi bulunmamaktadır.' : 'Konum, Konum'))
                   ],
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 3.0),
                 child: Row(
-                  children: [const Icon(Icons.cake, size: 20), Text(Constants.USER.birthday)],
+                  children: [const Icon(Icons.cake, size: 20), Text(viewModel.userModel.data!.birthday)],
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 3.0),
                 child: Row(
-                  children: [const Icon(Icons.calendar_month, size: 20), Text(Constants.USER.accountCreationDate)],
+                  children: [
+                    const Icon(Icons.calendar_month, size: 20),
+                    Text(viewModel.userModel.data!.accountCreationDate)
+                  ],
                 ),
               ),
               const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
               Row(
                 children: [
-                  Text('${Constants.USER.following.length} Takip edilen'),
+                  Text('${viewModel.userModel.data!.following.length} Takip edilen'),
                   const Box(size: BoxSize.MEDIUM, type: BoxType.HORIZONTAL),
-                  Text('${Constants.USER.followers.length} Takipçi'),
+                  Text('${viewModel.userModel.data!.followers.length} Takipçi'),
                 ],
               ),
             ],
@@ -191,7 +201,9 @@ class ProfileView extends StatelessWidget {
                 child: Image.asset('assets/images/default_background.webp', fit: BoxFit.fitWidth)),
           ),
           Positioned(
-              bottom: 0.0, right: 300.0, child: CustomCircleAvatar(photoUrl: Constants.USER.profilePhoto, radius: 40)),
+              bottom: 0.0,
+              right: 300.0,
+              child: CustomCircleAvatar(photoUrl: viewModel.userModel.data!.profilePhoto, radius: 40)),
           Align(
             alignment: const Alignment(0.9, 1.3),
             child: MyButtonWidget(
@@ -215,7 +227,10 @@ class ProfileView extends StatelessWidget {
     if (viewModel.tweetResource.data == null) {
       return const Center(child: Text('Atımış tweetiniz bulunmamaktadır.'));
     }
-    return tweetListViewContainer(resource: viewModel.tweetResource);
+    return TweetListViewContainer(
+      resource: viewModel.tweetResource,
+      userModel: viewModel.userModel.data!,
+    );
   }
 
   Widget yanitlarContainer() {

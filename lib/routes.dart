@@ -54,11 +54,11 @@ class RouteGenerator {
           },
         );
       case profileRoute:
-        // int movieId = settings.arguments as int;
+        String userId = settings.arguments as String;
         return MaterialPageRoute(
             settings: settings,
             builder: (_) => ProfileView(
-                  viewModel: ProfileCubit(repo: locator.get<ProfileRepository>()),
+                  viewModel: ProfileCubit(repo: locator.get<ProfileRepository>()), userId: userId,
                   // movieId: movieId,
                 ));
       // case editRoute:

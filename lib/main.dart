@@ -52,6 +52,12 @@ class MyApp extends StatelessWidget {
                   // fontFamily: 'Chirp',
                   ),
             ),
+        pageTransitionsTheme: PageTransitionsTheme(
+          builders: {
+            TargetPlatform.iOS: NoAnimationPageTransitionsBuilder(), // Remove animation for iOS
+            TargetPlatform.android: NoAnimationPageTransitionsBuilder(), // Remove animation for Android
+          },
+        ),
         colorScheme: const ColorScheme.light().copyWith(primary: Colors.white),
         bottomAppBarTheme: const BottomAppBarTheme(shape: CircularNotchedRectangle()),
         progressIndicatorTheme: ProgressIndicatorThemeData(color: CustomColors.blue),
@@ -82,5 +88,21 @@ class MyApp extends StatelessWidget {
       onGenerateRoute: RouteGenerator.GenerateRoute,
       initialRoute: welcomeRoute,
     );
+  }
+}
+
+class NoAnimationPageTransitionsBuilder extends PageTransitionsBuilder {
+  const NoAnimationPageTransitionsBuilder();
+
+  @override
+  Widget buildTransitions<T>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    // Return the child without any animation
+    return child;
   }
 }

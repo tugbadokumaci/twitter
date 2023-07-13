@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:twitter/inheritance/app_style.dart';
 import 'package:twitter/utils/box_constants.dart';
 import 'package:twitter/utils/constants.dart';
 import 'package:twitter/utils/theme_utils.dart';
@@ -17,6 +16,7 @@ class Navbar extends StatelessWidget {
 
     return Container(
       width: navbarWidth,
+      color: Colors.black,
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
@@ -48,19 +48,19 @@ class Navbar extends StatelessWidget {
                         photoUrl: Constants.USER.profilePhoto,
                         radius: 25,
                       ),
-                      Spacer(),
-                      Icon(Icons.add, color: Colors.white)
+                      const Spacer(),
+                      const Icon(Icons.add, color: Colors.white)
                     ],
                   ),
-                  Box(size: BoxSize.EXTRASMALL, type: BoxType.VERTICAL),
+                  const Box(size: BoxSize.EXTRASMALL, type: BoxType.VERTICAL),
                   Text(name, style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
                   Text('@$username', style: Theme.of(context).textTheme.titleMedium),
-                  Box(size: BoxSize.EXTRASMALL, type: BoxType.VERTICAL),
+                  const Box(size: BoxSize.EXTRASMALL, type: BoxType.VERTICAL),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('${Constants.USER.following.length} Takip Edilen'),
-                      SizedBox(width: 10),
+                      const SizedBox(width: 10),
                       Text('${Constants.USER.followers.length} Takipçi'),
                     ],
                   ),
@@ -73,7 +73,7 @@ class Navbar extends StatelessWidget {
             leading: const Icon(Icons.person_outlined, color: Colors.white),
             onTap: () {
               Navigator.pop(context);
-              Navigator.pushNamed(context, '/profile');
+              Navigator.pushNamed(context, '/profile', arguments: Constants.USER.userId);
             },
           ),
           ListTile(

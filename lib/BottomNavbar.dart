@@ -6,6 +6,7 @@ import 'package:twitter/bloc/search_page/search_cubit.dart';
 import 'package:twitter/bloc/search_page/search_repository.dart';
 import 'package:twitter/bloc/search_page/search_view.dart';
 import 'package:twitter/service_locator.dart';
+import 'package:twitter/widget/navigator_utils.dart';
 
 class BottomNavbar extends StatefulWidget {
   @override
@@ -13,56 +14,58 @@ class BottomNavbar extends StatefulWidget {
 }
 
 class _BottomNavbarState extends State<BottomNavbar> {
-  int _currentIndex = 0;
+  int currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      currentIndex: _currentIndex,
+      type: BottomNavigationBarType.fixed,
+      backgroundColor: Colors.black,
+      showSelectedLabels: false,
+      showUnselectedLabels: false,
+      currentIndex: currentIndex,
       onTap: (index) {
         setState(() {
-          _currentIndex = index;
+          currentIndex = index;
         });
 
         // Perform actions based on the tapped item
         switch (index) {
           case 0:
-            Navigator.push(
+            navigateToNewRoute(
               context,
-              MaterialPageRoute(
-                builder: (_) => HomeView(
-                  viewModel: HomeCubit(repo: locator<HomeRepository>()),
-                ),
-              ),
+              '/home',
+              HomeCubit(repo: locator<HomeRepository>()),
             );
           case 1:
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => SearchView(
-                  viewModel: SearchCubit(repo: locator<SearchRepository>()),
-                ),
-              ),
-            );
-
+            navigateToNewRoute(
+                context,
+                '/search',
+                SearchCubit(
+                  repo: locator<SearchRepository>(),
+                ));
           case 2:
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => SearchView(
-                  viewModel: SearchCubit(repo: locator<SearchRepository>()),
-                ),
-              ),
-            );
+            navigateToNewRoute(
+                context,
+                '/search',
+                SearchCubit(
+                  repo: locator<SearchRepository>(),
+                ));
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (_) => SearchView(
+          //       viewModel: SearchCubit(repo: locator<SearchRepository>()),
+          //     ),
+          //   ),
+          // );
           case 3:
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => SearchView(
-                  viewModel: SearchCubit(repo: locator<SearchRepository>()),
-                ),
-              ),
-            );
+            navigateToNewRoute(
+                context,
+                '/search',
+                SearchCubit(
+                  repo: locator<SearchRepository>(),
+                ));
         }
       },
       items: const [

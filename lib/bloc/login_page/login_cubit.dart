@@ -65,7 +65,7 @@ class LoginCubit extends Cubit<LoginState> {
         emit(LoginSuccess());
         Fluttertoast.showToast(
           msg: 'Log in Success',
-          backgroundColor: Colors.greenAccent,
+          backgroundColor: Colors.green,
           gravity: ToastGravity.TOP,
         );
         Navigator.pushNamed(context, homeRoute);

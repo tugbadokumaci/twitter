@@ -14,19 +14,31 @@ class SearchCubit extends Cubit<SearchState> {
 
   TextEditingController searchController = TextEditingController();
   Resource<List<UserModel>> userResource = Resource(status: Status.LOADING, data: null, errorMessage: null);
+  Resource<List<UserModel>> allUserResource = Resource(status: Status.LOADING, data: null, errorMessage: null);
 
   Future<void> searchUsers(String value) async {
-    // emit(HomeLoading());
+    emit(SearchLoading());
     userResource = await _repo.searchByUsername(searchController.text);
-    if (userResource.data == null) {
-      // no users found
-    } else {
-      if (userResource.status == Status.SUCCESS) {
+    if (userResource.status == Status.SUCCESS) {
+      if (searchController.text == '') {
         emit(SearchInitial());
       } else {
-        debugPrint('error while searching users');
-        emit(SearchError());
+        emit(SearchSuccess());
       }
+    } else {
+      debugPrint(userResource.errorMessage);
+      debugPrint('search cubit -> searchUsers -> userResource status ERROR');
+    }
+  }
+
+  Future<void> getAllUsername() async {
+    allUserResource = await _repo.getAllUsername();
+
+    if (allUserResource.status == Status.SUCCESS) {
+      emit(SearchInitial());
+    } else {
+      debugPrint(allUserResource.errorMessage);
+      debugPrint('search cubit -> getAllUsername -> allUserResource status ERROR');
     }
   }
 }

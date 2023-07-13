@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:twitter/models/tweet_model.dart';
 import 'package:twitter/service_locator.dart';
-import 'package:twitter/utils/constants.dart';
 
 import '../utils/resource.dart';
 
@@ -52,11 +51,10 @@ mixin MixinTweetFeature {
     }
   }
 
-  Future<Resource<List<TweetModel>>> getUserTweets() async {
+  Future<Resource<List<TweetModel>>> getTweetsByUserId(String userId) async {
     List<TweetModel> tweetList = [];
     try {
-      final QuerySnapshot snapshot =
-          await FirebaseFirestore.instance.collection('tweets').where('userId', isEqualTo: Constants.USER.userId).get();
+      final QuerySnapshot snapshot = await firestore.collection('tweets').where('userId', isEqualTo: userId).get();
 
       for (var doc in snapshot.docs) {
         // final data = doc.data();
@@ -78,10 +76,10 @@ mixin MixinTweetFeature {
 
         tweetList.add(tweet);
       }
-      debugPrint(tweetList.toString());
+      debugPrint('User tweets fetched successfully');
       return Resource.success(tweetList);
     } catch (e) {
-      debugPrint(e.toString());
+      debugPrint('fetching error while getting Tweets By User Id $e');
       return Resource.error(e.toString());
     }
   }
