@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:twitter/models/tweet_model.dart';
 import 'package:twitter/models/user_model.dart';
 import 'package:twitter/service_locator.dart';
@@ -18,14 +17,14 @@ mixin MixinTweetFeature {
     final CollectionReference tweetsCollection = firestore.collection('tweets');
     try {
       DateTime tweetingTime = DateTime.now();
-      String formattedTweetingTime = DateFormat('dd MMM yyyy').format(tweetingTime);
+      // String formattedTweetingTime = DateFormat('dd MMM yyyy HH:mm:ss').format(tweetingTime);
 
       final DocumentReference newTweetRef = await tweetsCollection.add({
-        'date': formattedTweetingTime,
+        'date': tweetingTime,
         'userId': userId,
         'text': text,
         'image': '',
-        'favList': [],
+        'favList': [''],
       });
 
       if (imageData != null) {
@@ -72,11 +71,12 @@ mixin MixinTweetFeature {
         }
 
         TweetModel tweet = TweetModel(
-          date: doc['date'].toString(), // data comes in datetime
+          date: doc['date'].toDate(), // data comes in datetime
           favList: List<String>.from(doc['favList']),
           imageData: imageData,
           text: doc['text'],
           userId: doc['userId'],
+          id: doc.id,
         );
 
         tweetList.add(tweet);
@@ -108,12 +108,40 @@ mixin MixinTweetFeature {
         following: snapshot['following'].cast<String>(),
         tweets: snapshot['tweets'].cast<String>(),
         // location: snapshot['location'],
+        favList: snapshot['favList'].cast<String>(),
       );
       debugPrint("3");
 
       return Resource.success(userModel);
     } catch (e) {
       return Resource.error("Hatalı $e");
+    }
+  }
+
+  Future<Resource<bool>> setUserModelById(UserModel userModel) async {
+    try {
+      DocumentReference docRef = firestore.collection('users').doc(userModel.userId);
+
+      Map<String, dynamic> userData = {
+        'email': userModel.email,
+        'password': userModel.password,
+        'name': userModel.name,
+        'accountCreationDate': userModel.accountCreationDate,
+        'birthday': userModel.birthday,
+        'username': userModel.username,
+        'bio': userModel.bio,
+        'profilePhoto': userModel.profilePhoto,
+        'followers': userModel.followers,
+        'following': userModel.following,
+        'tweets': userModel.tweets,
+        'favList': userModel.favList,
+        'location': userModel.location,
+      };
+      await docRef.set(userData);
+
+      return Resource.success(true);
+    } catch (e) {
+      return Resource.error(e.toString());
     }
   }
 }

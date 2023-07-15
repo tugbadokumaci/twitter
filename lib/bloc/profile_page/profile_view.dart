@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twitter/bloc/profile_page/profile_cubit.dart';
@@ -354,20 +356,39 @@ class ProfileView extends StatelessWidget {
               ? 'Medyanız bulunmamaktadır.'
               : 'Kullanıcının medyası bulunmamaktadır.'));
     }
+    debugPrint('routing to tweet container $state.me');
     return MediaListViewContainer(
       resource: state.mediaResource,
     );
   }
 
   Widget begeniContainer(ProfileSuccess state) {
-    return Container(
-      color: Colors.black,
-      child: Center(
-          child: Text(state.userModel.data!.userId == Constants.USER.userId
-              ? 'Begeniniz bulunmamaktadır.'
-              : 'Kullanıcının begendikleri bulunmamaktadır.')),
+    if (state.tweetResource.data == null || state.tweetResource.data!.isEmpty) {
+      if (state.userModel.data!.userId == Constants.USER.userId) {
+        return const Center(child: Text('Atımış tweetiniz bulunmamaktadır.'));
+      } else {
+        return const Center(child: Text('Kullanıcının atılmış tweetini bulunmamaktadır.'));
+      }
+    }
+    debugPrint('begeni container : ${state.favTweetResource.data!.length.toString()}');
+    return SizedBox(
+      height: 600,
+      child: TweetListViewContainer(
+        resource: state.favTweetResource,
+        baseViewModel: viewModel,
+      ),
     );
   }
+
+  // Widget begeniContainer(ProfileSuccess state) {
+  //   return Container(
+  //     color: Colors.black,
+  //     child: Center(
+  //         child: Text(state.userModel.data!.userId == Constants.USER.userId
+  //             ? 'Begeniniz bulunmamaktadır.'
+  //             : 'Kullanıcının begendikleri bulunmamaktadır.')),
+  //   );
+  // }
 
   Widget _buildError(BuildContext context) {
     return Container(

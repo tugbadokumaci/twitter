@@ -20,6 +20,7 @@ class ProfileCubit extends Cubit<ProfileState> implements BaseViewModel {
   // Resource<List<Uint8List>> mediaResource = Resource(status: Status.LOADING, data: null, errorMessage: null);
   // Resource<UserModel> userModel = Resource(status: Status.LOADING, data: null, errorMessage: null);
   late Resource<List<TweetModel>> tweetResource;
+  late Resource<List<TweetModel>> favTweetResource;
   late Resource<List<Uint8List>> mediaResource;
   late Resource<UserModel> userModel;
 
@@ -29,14 +30,20 @@ class ProfileCubit extends Cubit<ProfileState> implements BaseViewModel {
     tweetResource = await _repo.getTweetsByUserId(userId);
     mediaResource = await _repo.getUserImages(userId);
     userModel = await _repo.getUserModelById(userId);
+    favTweetResource = await _repo.getFavTweetsByUserId(userId);
+
     // debugPrint('start');
     debugPrint(tweetResource.status.toString());
     debugPrint(mediaResource.status.toString());
     debugPrint(userModel.status.toString());
+    debugPrint(favTweetResource.status.toString());
     if (tweetResource.status == Status.SUCCESS &&
         mediaResource.status == Status.SUCCESS &&
-        userModel.status == Status.SUCCESS) {
+        userModel.status == Status.SUCCESS &&
+        favTweetResource.status == Status.SUCCESS) {
+      debugPrint('Everything fetched succesfully: ${favTweetResource.data!.length.toString()}');
       emit(ProfileSuccess(
+          favTweetResource: favTweetResource,
           isFollowing: Constants.USER.following.contains(userId),
           mediaResource: mediaResource,
           tweetResource: tweetResource,
@@ -64,6 +71,7 @@ class ProfileCubit extends Cubit<ProfileState> implements BaseViewModel {
           .setFollowerAndFollowingList(userModel.data!); // onun followers güncelle + benim following güncelle
       if (result.status == Status.SUCCESS) {
         emit(ProfileSuccess(
+            favTweetResource: favTweetResource,
             isFollowing: Constants.USER.following.contains(userId),
             tweetResource: tweetResource,
             mediaResource: mediaResource,
@@ -90,6 +98,29 @@ class ProfileCubit extends Cubit<ProfileState> implements BaseViewModel {
     } catch (e) {
       debugPrint('HomeCubit getUserModelById Exception: $e');
       return Resource.error("error");
+    }
+  }
+
+  Future<void> updateFavList(String tweetId) async {
+    final userResource = await _repo.getUserModelById(Constants.USER.userId);
+    if (userResource.status == Status.SUCCESS) {
+      if (userResource.data!.favList.contains(tweetId)) {
+        userResource.data!.favList.remove(tweetId);
+        Constants.USER.favList = userResource.data!.favList;
+      } else {
+        userResource.data!.favList.add(tweetId);
+        Constants.USER.favList = userResource.data!.favList;
+      }
+      _repo.setUserModelById(userResource.data!);
+      emit(ProfileSuccess(
+          tweetResource: tweetResource,
+          mediaResource: mediaResource,
+          userModel: userModel,
+          isFollowing: Constants.USER.following.contains(userModel.data!.userId),
+          favTweetResource: favTweetResource));
+      debugPrint('Profile state is updated');
+    } else {
+      emit(ProfileError());
     }
   }
 }

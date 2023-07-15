@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:twitter/inheritance/mixin_tweet_feature.dart';
+import 'package:twitter/models/tweet_model.dart';
 import 'package:twitter/models/user_model.dart';
 import 'package:twitter/utils/constants.dart';
 import '../../utils/resource.dart';
@@ -46,6 +47,44 @@ class ProfileRepository with MixinTweetFeature {
 
       return Resource.success(userModel.followers.contains(Constants.USER.userId));
     } catch (e) {
+      return Resource.error(e.toString());
+    }
+  }
+
+  Future<Resource<List<TweetModel>>> getFavTweetsByUserId(String userId) async {
+    List<TweetModel> favTweetList = [];
+    try {
+      final DocumentSnapshot usersSnapshot = await firestore.collection('users').doc(userId).get();
+      final List<String> favList = usersSnapshot['favList'].cast<String>();
+      debugPrint(favList.toString());
+      for (var tweetId in favList) {
+        if (tweetId == '') {
+          continue;
+        }
+        final tweetsSnapshot = await firestore.collection('tweets').doc(tweetId).get();
+        final String imageFileName = 'tweet_image_$tweetId.jpg';
+        Uint8List? imageData;
+        try {
+          final ref = storage.ref().child(imageFileName);
+          final url = await ref.getDownloadURL();
+          imageData = await ref.getData();
+        } catch (e) {
+          debugPrint('tweet without an image');
+        }
+
+        favTweetList.add(TweetModel(
+          id: tweetsSnapshot.id,
+          date: tweetsSnapshot['date'].toDate(),
+          imageData: imageData,
+          text: tweetsSnapshot['text'],
+          userId: tweetsSnapshot['userId'],
+          favList: List<String>.from(tweetsSnapshot['favList']),
+        ));
+      }
+      debugPrint('User tweets fetched successfully');
+      return Resource.success(favTweetList);
+    } catch (e) {
+      debugPrint('fetching error while getting Tweets By User Id $e');
       return Resource.error(e.toString());
     }
   }

@@ -40,6 +40,7 @@ class HomeRepository with MixinTweetFeature {
           homePageTweets.addAll(followTweets);
         }
       }
+      homePageTweets.sort((a, b) => b.date.compareTo(a.date));
       return Resource.success(homePageTweets);
     } catch (e) {
       debugPrint('Error while fetching following list');

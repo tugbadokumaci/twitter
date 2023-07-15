@@ -14,9 +14,14 @@ class ProfileSuccess extends ProfileState {
   final Resource<List<TweetModel>> tweetResource;
   final Resource<List<Uint8List>> mediaResource;
   final Resource<UserModel> userModel;
+  final Resource<List<TweetModel>> favTweetResource;
 
   ProfileSuccess(
-      {required this.isFollowing, required this.tweetResource, required this.mediaResource, required this.userModel});
+      {required this.favTweetResource,
+      required this.isFollowing,
+      required this.tweetResource,
+      required this.mediaResource,
+      required this.userModel});
 }
 
 class ProfileError extends ProfileState {}

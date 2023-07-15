@@ -3,4 +3,5 @@ import 'package:twitter/utils/resource.dart';
 
 abstract class BaseViewModel {
   Future<Resource<UserModel>> getUserModelById(String userId);
+  Future<void> updateFavList(String tweetId);
 }

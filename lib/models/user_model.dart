@@ -12,6 +12,7 @@ class UserModel {
   List<String> following;
   List<String> tweets; // user ın tweet id tutan array
   String location;
+  List<String> favList;
 
   UserModel({
     required this.email,
@@ -27,5 +28,6 @@ class UserModel {
     required this.following,
     this.location = '',
     required this.tweets,
+    required this.favList,
   });
 }

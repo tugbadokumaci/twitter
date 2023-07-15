@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twitter/bloc/home_page/home_state.dart';
 import 'package:twitter/bloc/home_page/home_repository.dart';
 import 'package:twitter/models/user_model.dart';
+import 'package:twitter/utils/constants.dart';
 
 import '../../models/base_view_model.dart';
 import '../../models/tweet_model.dart';
@@ -47,6 +48,7 @@ class HomeCubit extends Cubit<HomeState> implements BaseViewModel {
     tweetResource = await _repo.getHomePageByUserId();
 
     if (tweetResource.status == Status.SUCCESS) {
+      // sort the tweet resource show newest first
       emit(HomeSuccess(tweetResource: tweetResource));
     } else {
       debugPrint('Home Cubit - getUserTweets - resource1 error ');
@@ -66,6 +68,24 @@ class HomeCubit extends Cubit<HomeState> implements BaseViewModel {
     } catch (e) {
       debugPrint('HomeCubit getUserModelById Exception: $e');
       return Resource.error("error");
+    }
+  }
+
+  Future<void> updateFavList(String tweetId) async {
+    final userResource = await _repo.getUserModelById(Constants.USER.userId);
+    if (userResource.status == Status.SUCCESS) {
+      if (userResource.data!.favList.contains(tweetId)) {
+        userResource.data!.favList.remove(tweetId);
+        Constants.USER.favList = userResource.data!.favList;
+      } else {
+        userResource.data!.favList.add(tweetId);
+        Constants.USER.favList = userResource.data!.favList;
+      }
+      _repo.setUserModelById(userResource.data!);
+      emit(HomeSuccess(tweetResource: tweetResource));
+      debugPrint('home success again');
+    } else {
+      emit(HomeError());
     }
   }
 }

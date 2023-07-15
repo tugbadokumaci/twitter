@@ -107,7 +107,7 @@ class Navbar extends StatelessWidget {
             children: <Widget>[
               ListTile(
                 title: Text(
-                  'item 1',
+                  'İstatistikler',
                   style: TextStyle(fontWeight: FontWeight.w700),
                 ),
               )
@@ -121,7 +121,7 @@ class Navbar extends StatelessWidget {
             children: <Widget>[
               ListTile(
                 title: Text(
-                  'item 1',
+                  'İstatistikler',
                   style: TextStyle(fontWeight: FontWeight.w700),
                 ),
               )
@@ -135,7 +135,7 @@ class Navbar extends StatelessWidget {
             children: <Widget>[
               ListTile(
                 title: Text(
-                  'item 1',
+                  'İstatistikler',
                   style: TextStyle(fontWeight: FontWeight.w700),
                 ),
               )

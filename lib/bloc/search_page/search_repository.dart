@@ -31,6 +31,7 @@ class SearchRepository {
             following: (data['following'] ?? []).cast<String>(),
             tweets: (data['tweets'] ?? []).cast<String>(),
             location: data['location'],
+            favList: (data['favList'] ?? []).cast<String>(),
           ));
         }
       }
@@ -68,6 +69,7 @@ class SearchRepository {
             following: (data['following'] ?? []).cast<String>(),
             tweets: (data['tweets'] ?? []).cast<String>(),
             location: data['location'],
+            favList: (data['favList'] ?? []).cast<String>(),
           ));
         }
       }
