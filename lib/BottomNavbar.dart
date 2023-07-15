@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:twitter/bloc/home_page/home_cubit.dart';
 import 'package:twitter/bloc/home_page/home_repository.dart';
-import 'package:twitter/bloc/home_page/home_view.dart';
 import 'package:twitter/bloc/search_page/search_cubit.dart';
 import 'package:twitter/bloc/search_page/search_repository.dart';
-import 'package:twitter/bloc/search_page/search_view.dart';
 import 'package:twitter/service_locator.dart';
 import 'package:twitter/widget/navigator_utils.dart';
 

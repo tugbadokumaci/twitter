@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:twitter/models/tweet_model.dart';
+import 'package:twitter/models/user_model.dart';
 import 'package:twitter/service_locator.dart';
 
 import '../utils/resource.dart';
@@ -85,6 +86,34 @@ mixin MixinTweetFeature {
     } catch (e) {
       debugPrint('fetching error while getting Tweets By User Id $e');
       return Resource.error(e.toString());
+    }
+  }
+
+  Future<Resource<UserModel>> getUserModelById(String userId) async {
+    try {
+      DocumentSnapshot snapshot = await firestore.collection('users').doc(userId).get();
+      // debugPrint( 'error while fetching user model for profile view and location is null?: ${snapshot['location'].isNull}');
+
+      final UserModel userModel = UserModel(
+        email: snapshot['email'],
+        password: snapshot['password'],
+        userId: snapshot.id,
+        name: snapshot['name'],
+        accountCreationDate: snapshot['accountCreationDate'],
+        birthday: snapshot['birthday'],
+        username: snapshot['username'],
+        bio: snapshot['bio'],
+        profilePhoto: snapshot['profilePhoto'],
+        followers: snapshot['followers'].cast<String>(),
+        following: snapshot['following'].cast<String>(),
+        tweets: snapshot['tweets'].cast<String>(),
+        // location: snapshot['location'],
+      );
+      debugPrint("3");
+
+      return Resource.success(userModel);
+    } catch (e) {
+      return Resource.error("Hatalı $e");
     }
   }
 }

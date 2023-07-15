@@ -59,9 +59,9 @@ class Navbar extends StatelessWidget {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('${Constants.USER.following.length} Takip Edilen'),
+                      Text('${Constants.USER.following.length - 1} Takip Edilen'),
                       const SizedBox(width: 10),
-                      Text('${Constants.USER.followers.length} Takipçi'),
+                      Text('${Constants.USER.followers.length - 1} Takipçi'),
                     ],
                   ),
                 ],

@@ -47,7 +47,9 @@ class SearchRepository {
       final querySnapshot = await firestore
           .collection('users')
           .orderBy("username")
-          .where("username", isNotEqualTo: [Constants.USER.username]).get();
+          .where("username", isNotEqualTo: Constants.USER.username)
+          .get();
+      debugPrint(Constants.USER.username);
       if (querySnapshot.docs.isNotEmpty) {
         final querySnapshotList = querySnapshot.docs;
         for (var i = 0; i < querySnapshotList.length; i++) {

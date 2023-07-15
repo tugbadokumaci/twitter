@@ -23,9 +23,9 @@ class UserModel {
     required this.accountCreationDate,
     required this.bio,
     required this.profilePhoto,
-    this.followers = const [],
-    this.following = const [],
+    required this.followers,
+    required this.following,
     this.location = '',
-    this.tweets = const [],
+    required this.tweets,
   });
 }

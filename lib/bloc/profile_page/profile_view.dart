@@ -12,9 +12,9 @@ import '../../widget/box.dart';
 import '../../widget/media_containers_utils.dart';
 
 class ProfileView extends StatelessWidget {
-  final String userId;
+  String userId;
   final ProfileCubit viewModel;
-  const ProfileView({super.key, required this.viewModel, required this.userId});
+  ProfileView({super.key, required this.viewModel, required this.userId});
   // ProfileView({Key? key, required this.viewModel, required this.userId}) : super(key: key) {
   //   viewModel.getUserProfile(userId);
   // }
@@ -42,7 +42,7 @@ class ProfileView extends StatelessWidget {
             if (state is ProfileLoading) {
               return _buildLoading(context);
             } else if (state is ProfileSuccess) {
-              return _buildSuccess(context);
+              return _buildSuccess(context, state);
             } else if (state is ProfileError) {
               return _buildError(context);
             }
@@ -139,13 +139,13 @@ class ProfileView extends StatelessWidget {
     );
   }
 
-  Widget _buildSuccess(BuildContext context) {
+  Widget _buildSuccess(BuildContext context, ProfileSuccess state) {
     return Container(
       height: MediaQuery.of(context).size.height,
       child: Scaffold(
           resizeToAvoidBottomInset: true,
           appBar: AppBar(
-            title: Text(viewModel.userModel.data!.name,
+            title: Text(state.userModel.data!.name,
                 style: Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold)),
             centerTitle: false,
           ),
@@ -167,28 +167,28 @@ class ProfileView extends StatelessWidget {
               height: MediaQuery.of(context).size.height,
               child: Center(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  _profileHeader(context),
+                  _profileHeader(context, state),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(Constants.USER.name, style: Theme.of(context).textTheme.headlineSmall),
+                        Text(state.userModel.data!.name, style: Theme.of(context).textTheme.headlineSmall),
                         Text(
-                          '@${viewModel.userModel.data!.username}',
+                          '@${state.userModel.data!.username}',
                           style: Theme.of(context).textTheme.titleMedium!.copyWith(color: CustomColors.lightGray),
                         ),
                         const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
-                        Text((viewModel.userModel.data!.bio == ''
+                        Text((state.userModel.data!.bio == ''
                             ? 'Biyografi bilgisi bulunmamaktadır.'
-                            : viewModel.userModel.data!.bio)),
+                            : state.userModel.data!.bio)),
                         const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
                         Padding(
                           padding: const EdgeInsets.only(bottom: 3.0),
                           child: Row(
                             children: [
                               const Icon(Icons.pin_drop, size: 20),
-                              Text((viewModel.userModel.data!.location == ''
+                              Text((state.userModel.data!.location == ''
                                   ? 'Konum bilgisi bulunmamaktadır.'
                                   : 'Konum, Konum'))
                             ],
@@ -197,7 +197,7 @@ class ProfileView extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(bottom: 3.0),
                           child: Row(
-                            children: [const Icon(Icons.cake, size: 20), Text(viewModel.userModel.data!.birthday)],
+                            children: [const Icon(Icons.cake, size: 20), Text(state.userModel.data!.birthday)],
                           ),
                         ),
                         Padding(
@@ -205,16 +205,16 @@ class ProfileView extends StatelessWidget {
                           child: Row(
                             children: [
                               const Icon(Icons.calendar_month, size: 20),
-                              Text(viewModel.userModel.data!.accountCreationDate)
+                              Text(state.userModel.data!.accountCreationDate)
                             ],
                           ),
                         ),
                         const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
                         Row(
                           children: [
-                            Text('${viewModel.userModel.data!.following.length} Takip edilen'),
+                            Text('${state.userModel.data!.following.length - 1} Takip edilen'), // bir tane hazır geliy
                             const Box(size: BoxSize.MEDIUM, type: BoxType.HORIZONTAL),
-                            Text('${viewModel.userModel.data!.followers.length} Takipçi'),
+                            Text('${state.userModel.data!.followers.length - 1} Takipçi'),
                           ],
                         ),
                       ],
@@ -240,11 +240,11 @@ class ProfileView extends StatelessWidget {
                           Expanded(
                             child: TabBarView(
                               children: [
-                                tweetContainer(),
-                                yanitlarContainer(),
-                                oneCikanlarContainer(),
-                                medyaContainer(),
-                                begeniContainer(),
+                                tweetContainer(state),
+                                yanitlarContainer(state),
+                                oneCikanlarContainer(state),
+                                medyaContainer(state),
+                                begeniContainer(state),
                               ],
                             ),
                           ),
@@ -259,7 +259,7 @@ class ProfileView extends StatelessWidget {
     );
   }
 
-  SizedBox _profileHeader(BuildContext context) {
+  SizedBox _profileHeader(BuildContext context, ProfileSuccess state) {
     return SizedBox(
       height: 170,
       child: Stack(
@@ -278,10 +278,10 @@ class ProfileView extends StatelessWidget {
           Positioned(
               bottom: 0.0,
               right: 300.0,
-              child: CustomCircleAvatar(photoUrl: viewModel.userModel.data!.profilePhoto, radius: 40)),
+              child: CustomCircleAvatar(photoUrl: state.userModel.data!.profilePhoto, radius: 40)),
           Align(
             alignment: const Alignment(0.9, 1.3),
-            child: (viewModel.userModel.data!.userId == Constants.USER.userId)
+            child: (state.userModel.data!.userId == Constants.USER.userId)
                 ? MyButtonWidget(
                     onPressed: () {
                       Navigator.pushNamed(context, '/edit');
@@ -295,10 +295,10 @@ class ProfileView extends StatelessWidget {
                   )
                 : MyButtonWidget(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/edit');
+                      viewModel.updateFollowingList(userId);
                     },
                     buttonColor: Colors.transparent,
-                    content: const Text('Takip et'),
+                    content: Text(state.isFollowing ? 'Takipten çık' : 'Takip et'),
                     context: context,
                     height: 30,
                     width: 100,
@@ -310,44 +310,62 @@ class ProfileView extends StatelessWidget {
     );
   }
 
-  Widget tweetContainer() {
-    if (viewModel.tweetResource.data == null) {
-      return const Center(child: Text('Atımış tweetiniz bulunmamaktadır.'));
+  Widget tweetContainer(ProfileSuccess state) {
+    if (state.tweetResource.data == null || state.tweetResource.data!.isEmpty) {
+      if (state.userModel.data!.userId == Constants.USER.userId) {
+        return const Center(child: Text('Atımış tweetiniz bulunmamaktadır.'));
+      } else {
+        return const Center(child: Text('Kullanıcının atılmış tweetini bulunmamaktadır.'));
+      }
     }
     return SizedBox(
       height: 600,
       child: TweetListViewContainer(
-        resource: viewModel.tweetResource,
-        userModel: viewModel.userModel.data!,
+        resource: state.tweetResource,
+        baseViewModel: viewModel,
       ),
     );
   }
 
-  Widget yanitlarContainer() {
+  Widget yanitlarContainer(ProfileSuccess state) {
     return Container(
       color: Colors.black,
-      child: const Center(child: Text('Yanıtınız bulunmamaktadır.')),
+      child: Center(
+          child: Text(state.userModel.data!.userId == Constants.USER.userId
+              ? 'Yanıtınız bulunmamaktadır.'
+              : 'Kullanıcının atılmış yanıtı bulunmamaktadır.')),
     );
   }
 
-  Widget oneCikanlarContainer() {
+  Widget oneCikanlarContainer(ProfileSuccess state) {
     return Container(
       color: Colors.black,
-      child: const Center(child: Text('One Cıkanlarınız bulunmamaktadır.')),
+      child: Center(
+          child: Text(state.userModel.data!.userId == Constants.USER.userId
+              ? 'One Cıkanlar bulunmamaktadır.'
+              : 'Kullanıcının one cıkarılanları bulunmamaktadır.')),
     );
   }
 
-  Widget medyaContainer() {
-    if (viewModel.mediaResource.data == null) {
-      return const Center(child: Text('Atımış tweetiniz bulunmamaktadır.'));
+  Widget medyaContainer(ProfileSuccess state) {
+    if (state.tweetResource.data == null || state.tweetResource.data!.isEmpty) {
+      return Center(
+          child: Text(state.userModel.data!.userId == Constants.USER.userId
+              ? 'Medyanız bulunmamaktadır.'
+              : 'Kullanıcının medyası bulunmamaktadır.'));
     }
-    return mediaListViewContainer(viewModel.mediaResource);
+    return MediaListViewContainer(
+      resource: state.mediaResource,
+    );
   }
 
-  Widget begeniContainer() {
+  Widget begeniContainer(ProfileSuccess state) {
     return Container(
       color: Colors.black,
-      child: const Center(child: Text('Begeniniz bulunmamaktadır.')),
+      child: Center(
+          child: Text(state.userModel.data!.userId == Constants.USER.userId
+              ? 'Begeniniz bulunmamaktadır.'
+              : 'Kullanıcının begendikleri bulunmamaktadır.')),
     );
   }
 

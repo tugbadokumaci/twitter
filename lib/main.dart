@@ -26,6 +26,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData.dark().copyWith(
+        splashColor: Colors.transparent, // Dıscard SPLASH EFFECT FOR WHOLE APP
+        highlightColor: Colors.transparent,
         appBarTheme: const AppBarTheme(centerTitle: true, backgroundColor: Colors.transparent, elevation: 0.0),
         primaryTextTheme: Typography(platform: TargetPlatform.iOS).white,
         // textTheme: Typography(platform: TargetPlatform.iOS).white,

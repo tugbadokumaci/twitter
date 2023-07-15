@@ -27,7 +27,7 @@ class HomeView extends StatelessWidget {
   }
 
   SafeArea _buildScaffold(BuildContext context) {
-    viewModel.getTweetsByUserId(Constants.USER.userId);
+    viewModel.getHomePageByUserId();
 
     return SafeArea(
         child: Scaffold(
@@ -109,7 +109,7 @@ class HomeView extends StatelessWidget {
     return Center(
         child: TweetListViewContainer(
       resource: state.tweetResource,
-      userModel: Constants.USER,
+      baseViewModel: viewModel,
     ));
   }
 

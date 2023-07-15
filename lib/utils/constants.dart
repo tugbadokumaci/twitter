@@ -16,6 +16,9 @@ class Constants {
     bio: '',
     profilePhoto: '',
     location: '',
+    following: [],
+    followers: [],
+    tweets: [],
   );
 }
 
@@ -27,9 +30,3 @@ const String profileRoute = '/profile';
 const String editRoute = '/edit';
 const String tweetRoute = '/tweet';
 const String searchRoute = '/search';
-
-class ApiConstants {
-  ApiConstants._();
-  static const String BASE_URL = "https://api.themoviedb.org/3";
-  static const String API_KEY = "2ff8bd41828e45d1511f4fd65b3c5772";
-}
