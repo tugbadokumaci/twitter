@@ -323,7 +323,7 @@ class ProfileView extends StatelessWidget {
     return SizedBox(
       height: 600,
       child: TweetListViewContainer(
-        resource: state.tweetResource,
+        tweetResource: state.tweetResource,
         baseViewModel: viewModel,
       ),
     );
@@ -374,7 +374,7 @@ class ProfileView extends StatelessWidget {
     return SizedBox(
       height: 600,
       child: TweetListViewContainer(
-        resource: state.favTweetResource,
+        tweetResource: state.favTweetResource,
         baseViewModel: viewModel,
       ),
     );

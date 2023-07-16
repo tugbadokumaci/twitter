@@ -7,6 +7,7 @@ class TweetModel {
   Uint8List? imageData;
   String text;
   String userId;
+  String commentTo;
   // Duration timeDifference;
 
   TweetModel({
@@ -17,5 +18,6 @@ class TweetModel {
     required this.text,
     required this.userId,
     // this.timeDifference = Duration.zero, // fill while fetching before sending to view
+    required this.commentTo,
   });
 }

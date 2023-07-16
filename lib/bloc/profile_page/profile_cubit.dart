@@ -123,4 +123,13 @@ class ProfileCubit extends Cubit<ProfileState> implements BaseViewModel {
       emit(ProfileError());
     }
   }
+
+  Future<Resource<List<TweetModel>>> getCommentsByTweetId(String tweetId) async {
+    final result = await _repo.getCommentsByTweetId(tweetId);
+    if (result.status == Status.SUCCESS) {
+      return Resource.success(result.data!);
+    }
+    debugPrint('base view model getCommentsByTweetId');
+    return Resource.error("error");
+  }
 }

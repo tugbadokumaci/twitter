@@ -25,6 +25,7 @@ mixin MixinTweetFeature {
         'text': text,
         'image': '',
         'favList': [''],
+        'commentTo': '',
       });
 
       if (imageData != null) {
@@ -77,6 +78,7 @@ mixin MixinTweetFeature {
           text: doc['text'],
           userId: doc['userId'],
           id: doc.id,
+          commentTo: doc['commentTo'],
         );
 
         tweetList.add(tweet);
@@ -141,6 +143,42 @@ mixin MixinTweetFeature {
 
       return Resource.success(true);
     } catch (e) {
+      return Resource.error(e.toString());
+    }
+  }
+
+  Future<Resource<List<TweetModel>>> getCommentsByTweetId(String tweetId) async {
+    List<TweetModel> commentList = [];
+    try {
+      final QuerySnapshot snapshot = await firestore.collection('tweets').where('commentTo', isEqualTo: tweetId).get();
+      for (var doc in snapshot.docs) {
+        final String tweetId = doc.id;
+        final String imageFileName = 'tweet_image_$tweetId.jpg';
+        Uint8List? imageData;
+        try {
+          final ref = storage.ref().child(imageFileName);
+          final url = await ref.getDownloadURL();
+          imageData = await ref.getData();
+        } catch (e) {
+          debugPrint('tweet without an image');
+        }
+
+        TweetModel tweet = TweetModel(
+          date: doc['date'].toDate(), // data comes in datetime
+          favList: List<String>.from(doc['favList']),
+          imageData: imageData,
+          text: doc['text'],
+          userId: doc['userId'],
+          id: doc.id,
+          commentTo: doc['commentTo'],
+        );
+
+        commentList.add(tweet);
+      }
+      debugPrint('Commetn tweets fetched successfully');
+      return Resource.success(commentList);
+    } catch (e) {
+      debugPrint('fetching error while getting Tweets By Commetn Id $e');
       return Resource.error(e.toString());
     }
   }

@@ -79,6 +79,7 @@ class ProfileRepository with MixinTweetFeature {
           text: tweetsSnapshot['text'],
           userId: tweetsSnapshot['userId'],
           favList: List<String>.from(tweetsSnapshot['favList']),
+          commentTo: tweetsSnapshot['commentTo'],
         ));
       }
       debugPrint('User tweets fetched successfully');
