@@ -45,16 +45,28 @@ class MyApp extends StatelessWidget {
                 fontFamily: 'ChirpHeavy',
               ),
               titleLarge: const TextStyle(
-                  // fontFamily: 'Chirp',
-                  ),
+                fontFamily: 'ChirpRegular',
+              ),
               titleMedium: const TextStyle(
-                  // fontFamily: 'Chirp',
-                  ),
+                fontFamily: 'ChirpRegular',
+              ),
               titleSmall: const TextStyle(
-                  // fontFamily: 'Chirp',
-                  ),
+                fontFamily: 'ChirpRegular',
+              ),
+              // bodyLarge: const TextStyle(
+              //   fontSize: 22,
+              //   fontFamily: 'ChirpRegular',
+              // ),
+              // bodyMedium: const TextStyle(
+              //   fontSize: 16,
+              //   fontFamily: 'ChirpRegular',
+              // ),
+              // bodySmall: const TextStyle(
+              //   fontSize: 14,
+              //   fontFamily: 'ChirpRegular',
+              // ),
             ),
-        pageTransitionsTheme: PageTransitionsTheme(
+        pageTransitionsTheme: const PageTransitionsTheme(
           builders: {
             TargetPlatform.iOS: NoAnimationPageTransitionsBuilder(), // Remove animation for iOS
             TargetPlatform.android: NoAnimationPageTransitionsBuilder(), // Remove animation for Android

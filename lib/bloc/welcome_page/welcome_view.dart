@@ -111,7 +111,7 @@ class WelcomeView extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 8.0),
                 child: Text(
                   'By signing up, you agree to the Terms of Service and Privacy Policy, including Cookie Use.',
-                  style: Theme.of(context).textTheme.bodySmall,
+                  style: Theme.of(context).textTheme.titleSmall,
                 ),
               ),
               const Box(size: BoxSize.LARGE, type: BoxType.VERTICAL),

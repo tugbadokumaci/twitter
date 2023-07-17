@@ -21,12 +21,12 @@ class TweetListViewContainer<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Expanded(
       child: ListView.builder(
-        primary: false,
-        scrollDirection: Axis.vertical,
+        // primary: false,
+        // scrollDirection: Axis.vertical,
         shrinkWrap: true,
-        // physics: const NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         itemCount: tweetResource.data!.length,
         itemBuilder: (context, index) {
           TweetModel tweet = tweetResource.data![index];
@@ -96,45 +96,104 @@ class TweetListViewContainer<T> extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(tweet.text, style: Theme.of(context).textTheme.titleSmall),
-                              const Box(size: BoxSize.EXTRASMALL, type: BoxType.VERTICAL),
+                              const SizedBox(height: 8),
                               Container(
                                   child: tweet.imageData != null
                                       ? SizedBox(
-                                          child: Image.memory(tweet.imageData!),
                                           height: 200,
                                           width: 300,
+                                          child: Image.memory(tweet.imageData!),
                                         )
                                       : const SizedBox()),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  IconButton(
+                                  TextButton(
                                       onPressed: () {
                                         openBottomSheet(context, tweet);
                                       },
-                                      icon: Icon(Icons.mode_comment_outlined, size: 20, color: CustomColors.lightGray)),
-                                  IconButton(
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.mode_comment_outlined, size: 20, color: CustomColors.lightGray),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            tweet.commentCount.toString(),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleSmall!
+                                                .copyWith(color: CustomColors.lightGray),
+                                          )
+                                        ],
+                                      )),
+                                  TextButton(
                                       onPressed: () {},
-                                      icon: FaIcon(Icons.share, size: 20, color: CustomColors.lightGray)),
-                                  IconButton(
+                                      child: Row(
+                                        children: [
+                                          FaIcon(Icons.share, size: 20, color: CustomColors.lightGray),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            tweet.commentCount.toString(),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleSmall!
+                                                .copyWith(color: CustomColors.lightGray),
+                                          )
+                                        ],
+                                      )),
+                                  TextButton(
                                       onPressed: () {
                                         baseViewModel.updateFavList(tweet.id);
                                       },
-                                      icon: Constants.USER.favList.contains(tweet.id)
-                                          ? Icon(Icons.favorite, color: Colors.red)
-                                          : Icon(Icons.favorite_border_outlined, color: CustomColors.lightGray)),
-
-                                  // icon: Icon(Icons.favorite_border_outlined,
-                                  //     size: 20,
-                                  //     color: CustomColors.lightGray,
-                                  //     fill: Constants.USER.favList.contains(tweet.id)
-                                  //         ? Colors.red
-                                  //         : CustomColors.lightGray)),
+                                      child: Row(
+                                        children: [
+                                          Constants.USER.favList.contains(tweet.id)
+                                              ? const Icon(Icons.favorite, color: Colors.red)
+                                              : Icon(Icons.favorite_border_outlined, color: CustomColors.lightGray),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            tweet.favList.length.toString(),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleSmall!
+                                                .copyWith(color: CustomColors.lightGray),
+                                          )
+                                        ],
+                                      )),
                                   IconButton(
                                       onPressed: () {},
                                       icon: Icon(Icons.stacked_bar_chart, size: 20, color: CustomColors.lightGray)),
                                 ],
-                              )
+                              ),
+                              // Row(
+                              //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              //   children: [
+                              //     IconButton(
+                              //         onPressed: () {
+                              //           openBottomSheet(context, tweet);
+                              //         },
+                              //         icon: Icon(Icons.mode_comment_outlined, size: 20, color: CustomColors.lightGray)),
+                              //     IconButton(
+                              //         onPressed: () {},
+                              //         icon: FaIcon(Icons.share, size: 20, color: CustomColors.lightGray)),
+                              //     IconButton(
+                              //         onPressed: () {
+                              //           baseViewModel.updateFavList(tweet.id);
+                              //         },
+                              //         icon: Constants.USER.favList.contains(tweet.id)
+                              //             ? Icon(Icons.favorite, color: Colors.red)
+                              //             : Icon(Icons.favorite_border_outlined, color: CustomColors.lightGray)),
+
+                              //     // icon: Icon(Icons.favorite_border_outlined,
+                              //     //     size: 20,
+                              //     //     color: CustomColors.lightGray,
+                              //     //     fill: Constants.USER.favList.contains(tweet.id)
+                              //     //         ? Colors.red
+                              //     //         : CustomColors.lightGray)),
+                              //     IconButton(
+                              //         onPressed: () {},
+                              //         icon: Icon(Icons.stacked_bar_chart, size: 20, color: CustomColors.lightGray)),
+                              //   ],
+                              // )
                             ],
                           ),
                         ),
@@ -177,7 +236,7 @@ class TweetListViewContainer<T> extends StatelessWidget {
           future: baseViewModel.getCommentsByTweetId(tweet.id),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             } else if (snapshot.hasData) {
@@ -193,122 +252,125 @@ class TweetListViewContainer<T> extends StatelessWidget {
                   ],
                 ));
               }
-              return ListView.builder(
-                itemCount: comments.length,
-                itemBuilder: (context, index) {
-                  TweetModel comment = comments[index];
-                  return FutureBuilder<Resource<UserModel>>(
-                    future: baseViewModel.getUserModelById(comment.userId),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Container();
-                      } else if (snapshot.hasError) {
-                        return Container();
-                      } else if (snapshot.hasData) {
-                        UserModel user = snapshot.data!.data!;
+              return SizedBox(
+                child: ListView.builder(
+                  itemCount: comments.length,
+                  itemBuilder: (context, index) {
+                    TweetModel comment = comments[index];
+                    return FutureBuilder<Resource<UserModel>>(
+                      future: baseViewModel.getUserModelById(comment.userId),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return Container();
+                        } else if (snapshot.hasError) {
+                          return Container();
+                        } else if (snapshot.hasData) {
+                          UserModel user = snapshot.data!.data!;
 
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.pushNamed(context, '/profile', arguments: user.userId);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 20.0),
-                            child: ListTile(
-                              leading: CustomCircleAvatar(photoUrl: user.profilePhoto, radius: 25),
-                              title: Row(
-                                children: [
-                                  Text(
-                                    user.name,
-                                    style:
-                                        Theme.of(context).textTheme.titleSmall!.copyWith(fontWeight: FontWeight.bold),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  Flexible(
-                                    child: Container(
-                                      child: Text(
-                                        '@${user.username}',
-                                        overflow: TextOverflow.ellipsis,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleSmall!
-                                            .copyWith(color: CustomColors.lightGray),
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(context, '/profile', arguments: user.userId);
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 20.0),
+                              child: ListTile(
+                                leading: CustomCircleAvatar(photoUrl: user.profilePhoto, radius: 25),
+                                title: Row(
+                                  children: [
+                                    Text(
+                                      user.name,
+                                      style:
+                                          Theme.of(context).textTheme.titleSmall!.copyWith(fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Flexible(
+                                      child: Container(
+                                        child: Text(
+                                          '@${user.username}',
+                                          overflow: TextOverflow.ellipsis,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleSmall!
+                                              .copyWith(color: CustomColors.lightGray),
+                                        ),
                                       ),
                                     ),
-                                  ),
 
-                                  // Text(
-                                  //   '@${user.username}',
-                                  //   style: Theme.of(context).textTheme.titleSmall!.copyWith(color: CustomColors.lightGray),
-                                  // ),
-                                  const SizedBox(width: 10),
-                                  Text(
-                                    baseViewModel is HomeCubit
-                                        ? formatDuration(DateTime.now().difference(tweet.date))
-                                        : DateFormat('dd MMM yyyy').format(tweet.date),
-                                    overflow: TextOverflow.ellipsis,
-                                    style: Theme.of(context).textTheme.titleSmall,
-                                  ),
-                                ],
-                              ),
-                              subtitle: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 10),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(comment.text, style: Theme.of(context).textTheme.titleSmall),
-                                    const Box(size: BoxSize.EXTRASMALL, type: BoxType.VERTICAL),
-                                    Container(
-                                        child: comment.imageData != null
-                                            ? SizedBox(
-                                                child: Image.memory(comment.imageData!),
-                                                height: 200,
-                                                width: 300,
-                                              )
-                                            : const SizedBox()),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        IconButton(
-                                            onPressed: () {
-                                              // openBottomSheet(context, comment);
-                                            },
-                                            icon: Icon(Icons.mode_comment_outlined,
-                                                size: 20, color: CustomColors.lightGray)),
-                                        IconButton(
-                                            onPressed: () {},
-                                            icon: FaIcon(Icons.share, size: 20, color: CustomColors.lightGray)),
-                                        IconButton(
-                                            onPressed: () {
-                                              baseViewModel.updateFavList(comment.id);
-                                            },
-                                            icon: Constants.USER.favList.contains(comment.id)
-                                                ? Icon(Icons.favorite, color: Colors.red)
-                                                : Icon(Icons.favorite_border_outlined, color: CustomColors.lightGray)),
-
-                                        // icon: Icon(Icons.favorite_border_outlined,
-                                        //     size: 20,
-                                        //     color: CustomColors.lightGray,
-                                        //     fill: Constants.USER.favList.contains(comment.id)
-                                        //         ? Colors.red
-                                        //         : CustomColors.lightGray)),
-                                        IconButton(
-                                            onPressed: () {},
-                                            icon:
-                                                Icon(Icons.stacked_bar_chart, size: 20, color: CustomColors.lightGray)),
-                                      ],
-                                    )
+                                    // Text(
+                                    //   '@${user.username}',
+                                    //   style: Theme.of(context).textTheme.titleSmall!.copyWith(color: CustomColors.lightGray),
+                                    // ),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      baseViewModel is HomeCubit
+                                          ? formatDuration(DateTime.now().difference(tweet.date))
+                                          : DateFormat('dd MMM yyyy').format(tweet.date),
+                                      overflow: TextOverflow.ellipsis,
+                                      style: Theme.of(context).textTheme.titleSmall,
+                                    ),
                                   ],
                                 ),
+                                subtitle: Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 10),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(comment.text, style: Theme.of(context).textTheme.titleSmall),
+                                      const Box(size: BoxSize.EXTRASMALL, type: BoxType.VERTICAL),
+                                      Container(
+                                          child: comment.imageData != null
+                                              ? SizedBox(
+                                                  height: 200,
+                                                  width: 300,
+                                                  child: Image.memory(comment.imageData!),
+                                                )
+                                              : const SizedBox()),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          IconButton(
+                                              onPressed: () {
+                                                openBottomSheet(context, comment);
+                                              },
+                                              icon: Icon(Icons.mode_comment_outlined,
+                                                  size: 20, color: CustomColors.lightGray)),
+                                          IconButton(
+                                              onPressed: () {},
+                                              icon: FaIcon(Icons.share, size: 20, color: CustomColors.lightGray)),
+                                          IconButton(
+                                              onPressed: () {
+                                                baseViewModel.updateFavList(comment.id);
+                                              },
+                                              icon: Constants.USER.favList.contains(comment.id)
+                                                  ? const Icon(Icons.favorite, color: Colors.red)
+                                                  : Icon(Icons.favorite_border_outlined,
+                                                      color: CustomColors.lightGray)),
+
+                                          // icon: Icon(Icons.favorite_border_outlined,
+                                          //     size: 20,
+                                          //     color: CustomColors.lightGray,
+                                          //     fill: Constants.USER.favList.contains(comment.id)
+                                          //         ? Colors.red
+                                          //         : CustomColors.lightGray)),
+                                          IconButton(
+                                              onPressed: () {},
+                                              icon: Icon(Icons.stacked_bar_chart,
+                                                  size: 20, color: CustomColors.lightGray)),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                // trailing: Text(userModel.name),
                               ),
-                              // trailing: Text(userModel.name),
                             ),
-                          ),
-                        );
-                      }
-                      return Container();
-                    },
-                  );
-                },
+                          );
+                        }
+                        return Container();
+                      },
+                    );
+                  },
+                ),
               );
             }
             return Container();

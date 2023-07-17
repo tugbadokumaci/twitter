@@ -112,7 +112,7 @@ class _SignupViewState extends State<SignupView> {
                 controller: widget.viewModel.getEmailController,
                 labelText: 'Email'),
             const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
-            Text('Doğum Tarihi', style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold)),
+            Text('Doğum Tarihi', style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold)),
             const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
             const Text(
                 'Bu, herkese açık olarak gösterilmeyecek. Bu hesap bir işletme, evcil hayvan veya başka bir şey için olsa bile kendi yaşını doğrulaman gerekir. (Geçerli format dd.MM.yyyy)'),
@@ -135,7 +135,7 @@ class _SignupViewState extends State<SignupView> {
                 content: Text('İleri',
                     style: Theme.of(context)
                         .textTheme
-                        .bodyMedium!
+                        .titleMedium!
                         .copyWith(fontWeight: FontWeight.bold, color: Colors.black)),
                 onPressed: () {
                   widget.viewModel.toStep2();
@@ -241,45 +241,54 @@ class _SignupViewState extends State<SignupView> {
         padding: const EdgeInsets.all(50.0),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           const Box(size: BoxSize.MEDIUM, type: BoxType.VERTICAL),
-          MyTextFieldWidget(
-            validatorCallback: ((value) {
-              if (value!.isEmpty) {
-                return "name can't be null";
-              } else {}
-              return null;
-            }),
-            controller: widget.viewModel.getNameController,
-            labelText: 'İsim',
-            isEnable: false,
-          ),
-          const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
-          MyTextFieldWidget(
-            validatorCallback: ((value) {
-              if (value!.isEmpty) {
-                return "email can't be null";
-              } else {}
-              return null;
-            }),
-            controller: widget.viewModel.getEmailController,
-            labelText: 'E-posta',
-            isEnable: false,
-          ),
-          const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
-          MyTextFieldWidget(
-            validatorCallback: ((value) {
-              if (value!.isEmpty) {
-                return "birthday can't be null";
-              } else {}
-              return null;
-            }),
-            controller: widget.viewModel.getBirthdayController,
-            labelText: 'Doğum Tarihi',
-            isEnable: false,
+          GestureDetector(
+            onTap: () {
+              widget.viewModel.toInitial();
+            },
+            child: Column(
+              children: [
+                MyTextFieldWidget(
+                  validatorCallback: ((value) {
+                    if (value!.isEmpty) {
+                      return "name can't be null";
+                    } else {}
+                    return null;
+                  }),
+                  controller: widget.viewModel.getNameController,
+                  labelText: 'İsim',
+                  isEnable: false,
+                ),
+                const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
+                MyTextFieldWidget(
+                  validatorCallback: ((value) {
+                    if (value!.isEmpty) {
+                      return "email can't be null";
+                    } else {}
+                    return null;
+                  }),
+                  controller: widget.viewModel.getEmailController,
+                  labelText: 'E-posta',
+                  isEnable: false,
+                ),
+                const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
+                MyTextFieldWidget(
+                  validatorCallback: ((value) {
+                    if (value!.isEmpty) {
+                      return "birthday can't be null";
+                    } else {}
+                    return null;
+                  }),
+                  controller: widget.viewModel.getBirthdayController,
+                  labelText: 'Doğum Tarihi',
+                  isEnable: false,
+                ),
+              ],
+            ),
           ),
           const Spacer(),
           Text(
               'Kaydolarak, Hizmet Şartları, Gizlilik Politikası ve Çerez Kullanımı koşullarını kabul etmiş olursun. Twitter, hesabını güvende tutmak ve reklamlar dahil olmak üzere hizmetlerimizi kişiselleştirmek gibi, Gizlilik Politikamızda belirtilen amaçlar doğrultusunda e-posta adresini ve telefon numaranı da içeren iletişim bilgilerini kullanabilir. Daha fazla bilgi al. Buradan aksini belirtmediğin sürece e-postanı ve telefon numaranı girdiğinde diğerleri seni bulabilir.',
-              style: Theme.of(context).textTheme.bodySmall),
+              style: Theme.of(context).textTheme.titleSmall),
           const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
           MyButtonWidget(
               context: context,
@@ -287,7 +296,7 @@ class _SignupViewState extends State<SignupView> {
               width: 350,
               buttonColor: CustomColors.blue,
               content: Text('Kaydol',
-                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       )),
@@ -324,7 +333,7 @@ class _SignupViewState extends State<SignupView> {
           const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
           Text(
             "6 veya daha fazla karakter olmasına dikkat et.",
-            style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.white),
+            style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.white),
           ),
           const Box(size: BoxSize.MEDIUM, type: BoxType.VERTICAL),
           MyTextFieldWidget(
@@ -347,7 +356,7 @@ class _SignupViewState extends State<SignupView> {
               content: Text(
                 'İleri',
                 style:
-                    Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.black, fontWeight: FontWeight.bold),
+                    Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.black, fontWeight: FontWeight.bold),
               ),
               onPressed: () {
                 widget.viewModel.signUp(context);
@@ -384,7 +393,7 @@ class _SignupViewState extends State<SignupView> {
                 const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
                 Text(
                   "Favori selfie'niz mi var? Hemen yükleyin.",
-                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.white),
+                  style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.white),
                 ),
                 const Box(size: BoxSize.LARGE, type: BoxType.VERTICAL),
                 imageProfile(context),
@@ -528,7 +537,7 @@ class _SignupViewState extends State<SignupView> {
               width: 350,
               enabled: widget.viewModel.isUsernameValid,
               buttonColor: Colors.white,
-              content: Text('İleri', style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.black)),
+              content: Text('İleri', style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.black)),
               onPressed: () {
                 widget.viewModel.saveUsername();
                 widget.viewModel.toChooseBio();
@@ -605,7 +614,7 @@ class _SignupViewState extends State<SignupView> {
                 height: 50,
                 width: 350,
                 buttonColor: Colors.white,
-                content: Text('İleri', style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.black)),
+                content: Text('İleri', style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.black)),
                 onPressed: () {
                   widget.viewModel.saveBio();
                 }),

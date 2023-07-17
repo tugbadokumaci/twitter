@@ -22,7 +22,7 @@ class ProfileRepository with MixinTweetFeature {
 
         try {
           final ref = storage.ref().child(imageFileName);
-          final url = await ref.getDownloadURL();
+          // final url = await ref.getDownloadURL();
           imageData = await ref.getData();
         } catch (e) {
           debugPrint('tweet without an image');
@@ -80,6 +80,7 @@ class ProfileRepository with MixinTweetFeature {
           userId: tweetsSnapshot['userId'],
           favList: List<String>.from(tweetsSnapshot['favList']),
           commentTo: tweetsSnapshot['commentTo'],
+          commentCount: tweetsSnapshot['commentCount'],
         ));
       }
       debugPrint('User tweets fetched successfully');

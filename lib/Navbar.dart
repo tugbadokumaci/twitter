@@ -59,9 +59,11 @@ class Navbar extends StatelessWidget {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('${Constants.USER.following.length - 1} Takip Edilen'),
+                      Text('${Constants.USER.following.length} Takip Edilen',
+                          style: Theme.of(context).textTheme.titleMedium),
                       const SizedBox(width: 10),
-                      Text('${Constants.USER.followers.length - 1} Takipçi'),
+                      Text('${Constants.USER.followers.length} Takipçi',
+                          style: Theme.of(context).textTheme.titleMedium),
                     ],
                   ),
                 ],
@@ -69,7 +71,7 @@ class Navbar extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: const Text('Profil'),
+            title: Text('Profil', style: Theme.of(context).textTheme.titleMedium),
             leading: const Icon(Icons.person_outlined, color: Colors.white),
             onTap: () {
               Navigator.pop(context);
@@ -77,21 +79,21 @@ class Navbar extends StatelessWidget {
             },
           ),
           ListTile(
-            title: const Text('Twitter Blue'),
+            title: Text('Twitter Blue', style: Theme.of(context).textTheme.titleMedium),
             leading: const Icon(Icons.book, color: Colors.white),
             onTap: () {
               Navigator.pop(context);
             },
           ),
           ListTile(
-            title: const Text('Listeler'),
+            title: Text('Listeler', style: Theme.of(context).textTheme.titleMedium),
             leading: const Icon(Icons.list_alt_outlined, color: Colors.white),
             onTap: () {
               Navigator.pop(context);
             },
           ),
           ListTile(
-            title: const Text('Yer işaretleri'),
+            title: Text('Yer işaretleri', style: Theme.of(context).textTheme.titleMedium),
             leading: const Icon(Icons.bookmark_outline, color: Colors.white),
             onTap: () {
               // Navigator.pushNamed(context, )

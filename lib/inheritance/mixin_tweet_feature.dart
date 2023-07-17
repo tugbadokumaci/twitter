@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:twitter/models/tweet_model.dart';
 import 'package:twitter/models/user_model.dart';
 import 'package:twitter/service_locator.dart';
+import 'package:twitter/utils/constants.dart';
 
 import '../utils/resource.dart';
 
@@ -18,14 +19,15 @@ mixin MixinTweetFeature {
     try {
       DateTime tweetingTime = DateTime.now();
       // String formattedTweetingTime = DateFormat('dd MMM yyyy HH:mm:ss').format(tweetingTime);
-
+      List<String> emptyList = [];
       final DocumentReference newTweetRef = await tweetsCollection.add({
         'date': tweetingTime,
         'userId': userId,
         'text': text,
         'image': '',
-        'favList': [''],
+        'favList': [],
         'commentTo': '',
+        'commentCount': 0,
       });
 
       if (imageData != null) {
@@ -79,6 +81,7 @@ mixin MixinTweetFeature {
           userId: doc['userId'],
           id: doc.id,
           commentTo: doc['commentTo'],
+          commentCount: doc['commentCount'],
         );
 
         tweetList.add(tweet);
@@ -147,6 +150,36 @@ mixin MixinTweetFeature {
     }
   }
 
+  Future<Resource<bool>> updateTweetFavList(String tweetId) async {
+    try {
+      DocumentReference docRef = FirebaseFirestore.instance.collection('tweets').doc(tweetId);
+
+      DocumentSnapshot docSnapshot = await docRef.get();
+      Map<String, dynamic>? data = docSnapshot.data() as Map<String, dynamic>?;
+
+      if (data != null) {
+        debugPrint("bu tweet güncelleniyor: $tweetId KONTROL  1");
+        List<String> favList = List<String>.from(data['favList']);
+
+        if (favList.contains(Constants.USER.userId)) {
+          // User already exists in the favList, remove the user
+          await docRef.update({
+            'favList': FieldValue.arrayRemove([Constants.USER.userId])
+          });
+          debugPrint("  ve bu kullanıcıyı bu tweet kaydının beğeni listesinden çıkardım KONTROL 2");
+        } else {
+          // User doesn't exist in the favList, add the user
+          await docRef.update({
+            'favList': FieldValue.arrayUnion([Constants.USER.userId])
+          });
+        }
+      }
+      return Resource.success(true);
+    } catch (e) {
+      return Resource.error(e.toString());
+    }
+  }
+
   Future<Resource<List<TweetModel>>> getCommentsByTweetId(String tweetId) async {
     List<TweetModel> commentList = [];
     try {
@@ -171,6 +204,7 @@ mixin MixinTweetFeature {
           userId: doc['userId'],
           id: doc.id,
           commentTo: doc['commentTo'],
+          commentCount: doc['commentCount'],
         );
 
         commentList.add(tweet);

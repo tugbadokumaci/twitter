@@ -166,10 +166,10 @@ class LoginView extends StatelessWidget {
             Row(
               children: [
                 Text('Henüz bir hesabın yok mu?',
-                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: CustomColors.lightGray)),
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(color: CustomColors.lightGray)),
                 TextButton(
-                  child:
-                      Text('Kaydol', style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: CustomColors.blue)),
+                  child: Text('Kaydol',
+                      style: Theme.of(context).textTheme.titleMedium!.copyWith(color: CustomColors.blue)),
                   onPressed: () => Navigator.pushNamed(context, '/signUp'),
                 )
               ],

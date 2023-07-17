@@ -111,7 +111,14 @@ class ProfileCubit extends Cubit<ProfileState> implements BaseViewModel {
         userResource.data!.favList.add(tweetId);
         Constants.USER.favList = userResource.data!.favList;
       }
-      _repo.setUserModelById(userResource.data!);
+      await _repo.setUserModelById(userResource.data!);
+      // add my current user to this tweets favList or vice-versa
+
+      await _repo.updateTweetFavList(tweetId);
+      // NOT SENDİNG THE OLD TWEET RESOURCE
+      /* normalde bu işlem viewModel.getHomePageByUserId() şeklinde view yapılmalıdır.*/
+      await getUserProfile(Constants.USER.userId);
+      // yukarıdaki satır denemedir.
       emit(ProfileSuccess(
           tweetResource: tweetResource,
           mediaResource: mediaResource,

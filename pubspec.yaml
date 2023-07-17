@@ -105,9 +105,9 @@ flutter:
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro
-    - family: Chirp
+    - family: ChirpRegular
       fonts:
-        - asset: assets/fonts/twitterchirp.ttf
+        - asset: assets/fonts/Chirp_regular.otf
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
   #

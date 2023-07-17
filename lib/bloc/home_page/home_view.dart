@@ -105,6 +105,7 @@ class HomeView extends StatelessWidget {
   }
 
   Widget _buildSuccess(HomeSuccess state) {
+    // viewModel.getHomePageByUserId();
     debugPrint('now state is success and tweet container will start${state.tweetResource.data.toString()}');
     return Center(
         child: TweetListViewContainer(

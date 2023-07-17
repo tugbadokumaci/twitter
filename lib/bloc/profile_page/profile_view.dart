@@ -44,6 +44,7 @@ class ProfileView extends StatelessWidget {
             if (state is ProfileLoading) {
               return _buildLoading(context);
             } else if (state is ProfileSuccess) {
+              // viewModel.getUserProfile(userId); // !!!
               return _buildSuccess(context, state);
             } else if (state is ProfileError) {
               return _buildError(context);
@@ -214,9 +215,9 @@ class ProfileView extends StatelessWidget {
                         const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
                         Row(
                           children: [
-                            Text('${state.userModel.data!.following.length - 1} Takip edilen'), // bir tane hazır geliy
+                            Text('${state.userModel.data!.following.length} Takip edilen'), // bir tane hazır geliy
                             const Box(size: BoxSize.MEDIUM, type: BoxType.HORIZONTAL),
-                            Text('${state.userModel.data!.followers.length - 1} Takipçi'),
+                            Text('${state.userModel.data!.followers.length} Takipçi'),
                           ],
                         ),
                       ],
@@ -320,12 +321,9 @@ class ProfileView extends StatelessWidget {
         return const Center(child: Text('Kullanıcının atılmış tweetini bulunmamaktadır.'));
       }
     }
-    return SizedBox(
-      height: 600,
-      child: TweetListViewContainer(
-        tweetResource: state.tweetResource,
-        baseViewModel: viewModel,
-      ),
+    return TweetListViewContainer(
+      tweetResource: state.tweetResource,
+      baseViewModel: viewModel,
     );
   }
 
