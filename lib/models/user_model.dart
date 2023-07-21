@@ -30,4 +30,9 @@ class UserModel {
     required this.tweets,
     required this.favList,
   });
+
+  @override
+  String toString() {
+    return '${this.name} - ${this.email}';
+  }
 }

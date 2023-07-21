@@ -14,7 +14,7 @@ mixin MixinTweetFeature {
   FirebaseStorage storage = locator.get<FirebaseStorage>();
   FirebaseFirestore firestore = locator.get<FirebaseFirestore>();
 
-  Future<bool> sendTweet(String userId, String text, Uint8List? imageData) async {
+  Future<bool> sendTweet(String userId, String text, Uint8List? imageData, {String commentTo = ''}) async {
     final CollectionReference tweetsCollection = firestore.collection('tweets');
     try {
       DateTime tweetingTime = DateTime.now();
@@ -26,9 +26,18 @@ mixin MixinTweetFeature {
         'text': text,
         'image': '',
         'favList': [],
-        'commentTo': '',
+        'commentTo': commentTo,
         'commentCount': 0,
       });
+      // if tweet is sending from detail cubit ( as a comment)
+      if (commentTo != '') {
+        final DocumentReference updateTweetCommentCounter = tweetsCollection.doc(commentTo);
+        updateTweetCommentCounter.update({'commentCount': FieldValue.increment(1)}).then((_) {
+          print('Comment count incremented successfully!');
+        }).catchError((error) {
+          print('Error incrementing comment count: $error');
+        });
+      }
 
       if (imageData != null) {
         final tweetId = newTweetRef.id;
@@ -166,6 +175,7 @@ mixin MixinTweetFeature {
           await docRef.update({
             'favList': FieldValue.arrayRemove([Constants.USER.userId])
           });
+          // Constants.USER.favList.removeWhere((element) => element == tweetId);
           debugPrint("  ve bu kullanıcıyı bu tweet kaydının beğeni listesinden çıkardım KONTROL 2");
         } else {
           // User doesn't exist in the favList, add the user

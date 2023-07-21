@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 import 'package:twitter/models/tweet_model.dart';
+import 'package:twitter/widget/box.dart';
 import 'package:twitter/widget/tweet_builder.dart';
 
 import '../models/base_view_model.dart';
+import '../utils/box_constants.dart';
 import '../utils/resource.dart';
 
 class TweetListViewContainer<T> extends StatelessWidget {
@@ -15,9 +17,20 @@ class TweetListViewContainer<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (tweetResource.data!.isEmpty) {
+      return const Center(
+          child: Column(
+        children: [
+          Icon(Icons.now_widgets_sharp, size: 30),
+          Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
+          Text('Your home page is empty'),
+        ],
+      ));
+    }
+
     return Column(
         children: tweetResource.data!.map((tweet) {
-      return TweetBuilder(baseViewModel: baseViewModel, tweet: tweet, tweetResource: tweetResource);
+      return TweetBuilder(baseViewModel: baseViewModel, tweet: tweet);
     }).toList());
 
     // return SizedBox(

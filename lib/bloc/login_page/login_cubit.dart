@@ -26,8 +26,8 @@ class LoginCubit extends Cubit<LoginState> {
   Future<void> initialize() async {
     getEmailController.text = await SharedPreferencesService.getEmailPreference();
     getPasswordController.text = await SharedPreferencesService.getPasswordPreference();
-    await Future.delayed(const Duration(seconds: 2));
-    emit(LoginForm());
+    // await Future.delayed(const Duration(seconds: 2));
+    // emit(LoginForm());
   }
 
   Future<void> toStep2() async {

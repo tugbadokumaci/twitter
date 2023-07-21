@@ -41,6 +41,7 @@ class LoginView extends StatelessWidget {
           },
           builder: ((context, state) {
             if (state is LoginInitial) {
+              viewModel.initialize();
               return _buildInitial(context);
             } else if (state is LoginStep2) {
               return _buildStep2(context);

@@ -86,6 +86,7 @@ class ProfileCubit extends Cubit<ProfileState> implements BaseViewModel {
     }
   }
 
+  @override
   Future<Resource<UserModel>> getUserModelById(String userId) async {
     try {
       final result = await _repo.getUserModelById(userId);
@@ -101,6 +102,7 @@ class ProfileCubit extends Cubit<ProfileState> implements BaseViewModel {
     }
   }
 
+  @override
   Future<void> updateFavList(String tweetId) async {
     final userResource = await _repo.getUserModelById(Constants.USER.userId);
     if (userResource.status == Status.SUCCESS) {
@@ -119,18 +121,19 @@ class ProfileCubit extends Cubit<ProfileState> implements BaseViewModel {
       /* normalde bu işlem viewModel.getHomePageByUserId() şeklinde view yapılmalıdır.*/
       await getUserProfile(Constants.USER.userId);
       // yukarıdaki satır denemedir.
-      emit(ProfileSuccess(
-          tweetResource: tweetResource,
-          mediaResource: mediaResource,
-          userModel: userModel,
-          isFollowing: Constants.USER.following.contains(userModel.data!.userId),
-          favTweetResource: favTweetResource));
+      // emit(ProfileSuccess(
+      //     tweetResource: tweetResource,
+      //     mediaResource: mediaResource,
+      //     userModel: userModel,
+      //     isFollowing: Constants.USER.following.contains(userModel.data!.userId),
+      //     favTweetResource: favTweetResource));
       debugPrint('Profile state is updated');
     } else {
       emit(ProfileError());
     }
   }
 
+  @override
   Future<Resource<List<TweetModel>>> getCommentsByTweetId(String tweetId) async {
     final result = await _repo.getCommentsByTweetId(tweetId);
     if (result.status == Status.SUCCESS) {

@@ -21,7 +21,7 @@ class Navbar extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: [
           SizedBox(
-            height: 220, // For settting drawer height
+            height: 230, // For settting drawer height
             child: DrawerHeader(
               decoration: const BoxDecoration(
                 color: Colors.black,
@@ -136,8 +136,9 @@ class Navbar extends StatelessWidget {
             ),
             children: <Widget>[
               ListTile(
+                leading: Icon(Icons.logout, color: Colors.white),
                 title: Text(
-                  'İstatistikler',
+                  'Çıkış yap',
                   style: TextStyle(fontWeight: FontWeight.w700),
                 ),
               )

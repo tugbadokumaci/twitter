@@ -56,6 +56,7 @@ class HomeCubit extends Cubit<HomeState> implements BaseViewModel {
     }
   }
 
+  @override
   Future<Resource<UserModel>> getUserModelById(String userId) async {
     try {
       final result = await _repo.getUserModelById(userId);
@@ -71,8 +72,9 @@ class HomeCubit extends Cubit<HomeState> implements BaseViewModel {
     }
   }
 
+  @override
   Future<void> updateFavList(String tweetId) async {
-    emit(HomeLoading());
+    // emit(HomeLoading());
     final userResource = await _repo.getUserModelById(Constants.USER.userId);
     if (userResource.status == Status.SUCCESS) {
       if (userResource.data!.favList.contains(tweetId)) {
@@ -89,8 +91,8 @@ class HomeCubit extends Cubit<HomeState> implements BaseViewModel {
       /* normalde bu işlem viewModel.getHomePageByUserId() şeklinde view yapılmalıdır.*/
       final newTweetResource = await _repo.getHomePageByUserId();
 
-      emit(HomeSuccess(tweetResource: newTweetResource));
-      debugPrint('home success again');
+      // emit(HomeSuccess(tweetResource: newTweetResource));
+      // debugPrint('home success again');
     } else {
       emit(HomeError());
     }

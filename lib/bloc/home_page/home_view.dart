@@ -27,6 +27,7 @@ class HomeView extends StatelessWidget {
   }
 
   SafeArea _buildScaffold(BuildContext context) {
+    // Inıtial state e taşı
     viewModel.getHomePageByUserId();
 
     return SafeArea(
@@ -64,11 +65,12 @@ class HomeView extends StatelessWidget {
         child: SingleChildScrollView(
           child: BlocConsumer<HomeCubit, HomeState>(
             listener: (context, state) {
-              // if (state is HomeInitial) {
-              //   WidgetsBinding.instance.addPostFrameCallback((_) {
-              //     viewModel.getTweetsByUserId(Constants.USER.userId);
-              //   });
-              // }
+              if (state is HomeInitial) {
+                // WidgetsBinding.instance.addPostFrameCallback((_) {
+                //   debugPrint('You should see this!!!');
+                //   viewModel.getHomePageByUserId();
+                // });
+              }
             },
             builder: (context, state) {
               debugPrint('Home view state: $state');
@@ -89,12 +91,6 @@ class HomeView extends StatelessWidget {
     ));
   }
 
-  Widget _buildInitial() {
-    return const Center(
-      child: Text('Home initial'),
-    );
-  }
-
   Widget _buildLoading() {
     debugPrint('state is loading');
     return Center(
@@ -105,13 +101,7 @@ class HomeView extends StatelessWidget {
   }
 
   Widget _buildSuccess(HomeSuccess state) {
-    // viewModel.getHomePageByUserId();
-    debugPrint('now state is success and tweet container will start${state.tweetResource.data.toString()}');
-    return Center(
-        child: TweetListViewContainer(
-      tweetResource: state.tweetResource,
-      baseViewModel: viewModel,
-    ));
+    return Center(child: TweetListViewContainer(tweetResource: state.tweetResource, baseViewModel: viewModel));
   }
 
   Widget _buildError() {

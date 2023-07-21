@@ -5,6 +5,7 @@ import 'package:twitter/service_locator.dart';
 import 'package:twitter/shared_preferences_service.dart';
 import 'package:twitter/utils/constants.dart';
 import 'package:twitter/utils/theme_utils.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 import 'firebase_options.dart';
 
@@ -15,6 +16,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  initializeDateFormatting();
   runApp(const MyApp());
 }
 
@@ -35,23 +37,29 @@ class MyApp extends StatelessWidget {
               headlineLarge: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontFamily: 'ChirpHeavy',
+                fontSize: 34,
               ),
               headlineMedium: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontFamily: 'ChirpHeavy',
+                fontSize: 30,
               ),
               headlineSmall: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontFamily: 'ChirpHeavy',
+                fontSize: 26,
               ),
               titleLarge: const TextStyle(
                 fontFamily: 'ChirpRegular',
+                fontSize: 24,
               ),
               titleMedium: const TextStyle(
                 fontFamily: 'ChirpRegular',
+                fontSize: 18,
               ),
               titleSmall: const TextStyle(
                 fontFamily: 'ChirpRegular',
+                fontSize: 16,
               ),
               // bodyLarge: const TextStyle(
               //   fontSize: 22,

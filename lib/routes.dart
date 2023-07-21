@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:twitter/bloc/detail_page/detail_cubit.dart';
+import 'package:twitter/bloc/detail_page/detail_repository.dart';
+import 'package:twitter/bloc/detail_page/detail_view.dart';
 // import 'package:twitter/bloc/edit_page/edit_cubit.dart';
 // import 'package:twitter/bloc/edit_page/edit_repository.dart';
 // import 'package:twitter/bloc/edit_page/edit_view.dart';
@@ -21,6 +24,8 @@ import 'package:twitter/bloc/tweet_page/tweet_cubit.dart';
 import 'package:twitter/bloc/tweet_page/tweet_repository.dart';
 import 'package:twitter/bloc/tweet_page/tweet_view.dart';
 import 'package:twitter/bloc/welcome_page/welcome_view.dart';
+import 'package:twitter/models/tweet_model.dart';
+import 'package:twitter/models/user_model.dart';
 import 'package:twitter/utils/constants.dart';
 
 import 'service_locator.dart';
@@ -61,6 +66,14 @@ class RouteGenerator {
                   viewModel: ProfileCubit(repo: locator.get<ProfileRepository>()), userId: userId,
                   // movieId: movieId,
                 ));
+      case detailRoute:
+        Map<String, dynamic> arguments = settings.arguments as Map<String, dynamic>;
+        TweetModel tweet = arguments['tweet'] as TweetModel;
+        UserModel user = arguments['user'] as UserModel;
+        return MaterialPageRoute(
+            settings: settings,
+            builder: (_) =>
+                DetailView(tweet: tweet, user: user, viewModel: DetailCubit(repo: locator.get<DetailRepository>())));
       // case editRoute:
       //   return MaterialPageRoute(
       //       settings: settings,

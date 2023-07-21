@@ -7,11 +7,11 @@ import 'package:twitter/bloc/profile_page/profile_state.dart';
 import 'package:twitter/utils/button_utils.dart';
 import 'package:twitter/utils/constants.dart';
 import 'package:twitter/widget/profile_photo_widget.dart';
-import 'package:twitter/widget/tweet_containers_utils.dart';
 import '../../utils/box_constants.dart';
 import '../../utils/theme_utils.dart';
 import '../../widget/box.dart';
 import '../../widget/media_containers_utils.dart';
+import '../../widget/tweet_containers_utils.dart';
 
 class ProfileView extends StatelessWidget {
   String userId;
@@ -38,9 +38,6 @@ class ProfileView extends StatelessWidget {
           },
           builder: (context, state) {
             debugPrint('Profile view state: $state');
-            if (state is ProfileInitial) {
-              // return _buildInitial(context);
-            }
             if (state is ProfileLoading) {
               return _buildLoading(context);
             } else if (state is ProfileSuccess) {
@@ -168,9 +165,10 @@ class ProfileView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _profileHeader(context, state),
-            Container(height: 200, width: 200, child: _profileBio(state, context)),
+            _profileBio(state, context),
             Container(
               height: MediaQuery.of(context).size.height * 0.5,
+              width: MediaQuery.of(context).size.width,
               child: DefaultTabController(
                 length: 5, // Number of tabs
                 child: SizedBox(
@@ -187,7 +185,7 @@ class ProfileView extends StatelessWidget {
                           Tab(text: 'Beğeni'),
                         ],
                       ),
-                      Container(
+                      Expanded(
                         child: TabBarView(
                           children: [
                             tweetContainer(state),
@@ -317,11 +315,11 @@ class ProfileView extends StatelessWidget {
       }
     }
     return SizedBox(
-      child: Text('Burayı düzenle'),
-      // child: TweetListViewContainer(
-      //   tweetResource: state.tweetResource,
-      //   baseViewModel: viewModel,
-      // ),
+      // child: Text('Burayı düzenle'),
+      child: TweetListViewContainer(
+        tweetResource: state.tweetResource,
+        baseViewModel: viewModel,
+      ),
     );
   }
 
@@ -369,11 +367,11 @@ class ProfileView extends StatelessWidget {
     debugPrint('begeni container : ${state.favTweetResource.data!.length.toString()}');
     return SizedBox(
       height: 300,
-      child: Text('Burayı da  düzenle'),
-      // child: TweetListViewContainer(
-      //   tweetResource: state.favTweetResource,
-      //   baseViewModel: viewModel,
-      // ),
+      // child: Text('Burayı da  düzenle'),
+      child: TweetListViewContainer(
+        tweetResource: state.favTweetResource,
+        baseViewModel: viewModel,
+      ),
     );
   }
 
@@ -390,7 +388,7 @@ class ProfileView extends StatelessWidget {
   Widget _buildError(BuildContext context) {
     return Container(
         height: MediaQuery.of(context).size.height,
-        child: Scaffold(
+        child: const Scaffold(
             body: Center(
           child: Text('Profile Error'),
         )));

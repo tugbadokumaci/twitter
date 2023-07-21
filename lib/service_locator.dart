@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get_it/get_it.dart';
+import 'package:twitter/bloc/detail_page/detail_repository.dart';
 // import 'package:twitter/bloc/edit_page/edit_repository.dart';
 import 'package:twitter/bloc/home_page/home_repository.dart';
 import 'package:twitter/bloc/login_page/login_repository.dart';
@@ -28,6 +29,7 @@ class DependencyInjection {
     locator.registerFactory<ProfileRepository>(() => ProfileRepository());
     locator.registerFactory<TweetRepository>(() => TweetRepository());
     locator.registerFactory<SearchRepository>(() => SearchRepository());
+    locator.registerFactory<DetailRepository>(() => DetailRepository());
     // locator.registerFactory<EditRepository>(() => EditRepository());
   }
 }
