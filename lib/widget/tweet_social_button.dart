@@ -20,7 +20,6 @@ class _TweetSocialButtonState extends State<TweetSocialButton> {
   Widget build(BuildContext context) {
     return TextButton(
         onPressed: () {
-          widget.callback();
           if (widget.fav) {
             setState(() {
               widget.fav = false;
@@ -32,6 +31,7 @@ class _TweetSocialButtonState extends State<TweetSocialButton> {
               widget.count++;
             });
           }
+          widget.callback();
         },
         child: Row(
           children: [

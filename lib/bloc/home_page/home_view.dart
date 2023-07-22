@@ -15,11 +15,8 @@ class HomeView extends StatelessWidget {
   final HomeCubit viewModel;
   const HomeView({Key? key, required this.viewModel}) : super(key: key);
 
-  // final _scaffoldKey = GlobalKey<ScaffoldState>();
-
   @override
   Widget build(BuildContext context) {
-    // viewModel.getTweetsByUserId(Constants.USER.userId);
     return BlocProvider<HomeCubit>(
       create: (_) => viewModel,
       child: _buildScaffold(context),
@@ -27,12 +24,8 @@ class HomeView extends StatelessWidget {
   }
 
   SafeArea _buildScaffold(BuildContext context) {
-    // Inıtial state e taşı
-    viewModel.getHomePageByUserId();
-
     return SafeArea(
         child: Scaffold(
-      // key: _scaffoldKey,
       appBar: AppBar(
         leadingWidth: 40,
         leading: Builder(
@@ -53,29 +46,18 @@ class HomeView extends StatelessWidget {
           Navigator.pushNamed(context, '/tweet');
         },
         backgroundColor: CustomColors.blue,
-        child: Container(
-          width: 45, // Set the desired width
-          height: 45, // Set the desired height
-          child: Image.asset('assets/images/new_tweet.png'),
-        ),
+        child: Container(width: 45, height: 45, child: Image.asset('assets/images/new_tweet.png')),
       ),
       drawer: const Navbar(),
       bottomNavigationBar: BottomNavbar(),
       body: Container(
         child: SingleChildScrollView(
           child: BlocConsumer<HomeCubit, HomeState>(
-            listener: (context, state) {
-              if (state is HomeInitial) {
-                // WidgetsBinding.instance.addPostFrameCallback((_) {
-                //   debugPrint('You should see this!!!');
-                //   viewModel.getHomePageByUserId();
-                // });
-              }
-            },
+            listener: (context, state) {},
             builder: (context, state) {
               debugPrint('Home view state: $state');
               if (state is HomeInitial) {
-                // return _buildInitial();
+                viewModel.getHomePageByUserId();
               } else if (state is HomeLoading) {
                 return _buildLoading();
               } else if (state is HomeSuccess) {
@@ -92,12 +74,7 @@ class HomeView extends StatelessWidget {
   }
 
   Widget _buildLoading() {
-    debugPrint('state is loading');
-    return Center(
-        child: LinearProgressIndicator(
-      color: CustomColors.blue,
-      backgroundColor: CustomColors.lightGray,
-    ));
+    return Center(child: LinearProgressIndicator(color: CustomColors.blue, backgroundColor: CustomColors.lightGray));
   }
 
   Widget _buildSuccess(HomeSuccess state) {
@@ -105,8 +82,6 @@ class HomeView extends StatelessWidget {
   }
 
   Widget _buildError() {
-    return const Center(
-      child: Text('Error View'),
-    );
+    return const Center(child: Text('Error View'));
   }
 }
