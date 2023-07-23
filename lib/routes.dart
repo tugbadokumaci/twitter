@@ -70,10 +70,11 @@ class RouteGenerator {
         Map<String, dynamic> arguments = settings.arguments as Map<String, dynamic>;
         TweetModel tweet = arguments['tweet'] as TweetModel;
         UserModel user = arguments['user'] as UserModel;
+        bool fav = arguments['fav'] as bool;
         return MaterialPageRoute(
             settings: settings,
-            builder: (_) =>
-                DetailView(tweet: tweet, user: user, viewModel: DetailCubit(repo: locator.get<DetailRepository>())));
+            builder: (_) => DetailView(
+                tweet: tweet, user: user, fav: fav, viewModel: DetailCubit(repo: locator.get<DetailRepository>())));
       // case editRoute:
       //   return MaterialPageRoute(
       //       settings: settings,

@@ -14,8 +14,9 @@ import 'detail_state.dart';
 class DetailView extends StatelessWidget {
   TweetModel tweet;
   UserModel user;
+  bool fav;
   DetailCubit viewModel;
-  DetailView({super.key, required this.viewModel, required this.tweet, required this.user});
+  DetailView({super.key, required this.viewModel, required this.tweet, required this.user, required this.fav});
 
   @override
   Widget build(BuildContext context) {
@@ -54,8 +55,7 @@ class DetailView extends StatelessWidget {
         // Add this widget
         child: Column(
           children: [
-            DetailTweetListTile(
-                user: user, viewModel: viewModel, tweet: tweet, fav: Constants.USER.favList.contains(tweet.id)),
+            DetailTweetListTile(user: user, viewModel: viewModel, tweet: tweet, fav: fav),
             Divider(height: 3, color: CustomColors.lightGray),
             TweetCommentsBottomSheet(tweet: tweet, baseViewModel: viewModel)
           ],

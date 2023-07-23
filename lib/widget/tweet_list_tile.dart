@@ -107,7 +107,7 @@ class TweetListTile extends StatelessWidget {
                   },
                   count: tweet.favList.length,
                   tweet: tweet,
-                  fav: fav,
+                  fav: Constants.USER.favList.contains(tweet.id),
                 ),
                 IconButton(
                     onPressed: () {}, icon: Icon(Icons.stacked_bar_chart, size: 20, color: CustomColors.lightGray)),

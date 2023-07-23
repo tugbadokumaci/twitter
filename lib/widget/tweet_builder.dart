@@ -7,6 +7,7 @@ import 'package:twitter/utils/resource.dart';
 import 'package:twitter/widget/tweet_list_tile.dart';
 
 import '../models/tweet_model.dart';
+import '../utils/constants.dart';
 
 class TweetBuilder extends StatelessWidget {
   final TweetModel tweet;
@@ -25,11 +26,13 @@ class TweetBuilder extends StatelessWidget {
             return Container();
           } else if (snapshot.hasData) {
             UserModel user = snapshot.data!.data!;
+
             return GestureDetector(
               onTap: () {
                 Navigator.pushNamed(context, '/detail', arguments: {
                   'tweet': tweet,
                   'user': user,
+                  'fav': Constants.USER.favList.contains(tweet.id),
                 });
               },
               child: Padding(

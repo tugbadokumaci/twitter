@@ -5,12 +5,10 @@ import 'package:twitter/models/tweet_model.dart';
 import '../../../utils/theme_utils.dart';
 
 class DetailTweetSocialButton extends StatefulWidget {
-  final TweetModel tweet;
   final Function(bool fav, int count) callback;
   int count;
   bool fav;
-  DetailTweetSocialButton(
-      {super.key, required this.callback, required this.count, required this.tweet, required this.fav});
+  DetailTweetSocialButton({super.key, required this.callback, required this.count, required this.fav});
 
   @override
   State<DetailTweetSocialButton> createState() => _DetailTweetSocialButtonState();

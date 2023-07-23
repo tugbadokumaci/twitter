@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -22,7 +24,7 @@ class DetailTweetListTile extends StatefulWidget {
     required this.user,
     required this.viewModel,
     required this.tweet,
-    this.fav = false, // !!!
+    required this.fav,
   });
 
   final UserModel user;
@@ -289,7 +291,6 @@ class _DetailTweetListTileState extends State<DetailTweetListTile> {
                   // });
                 },
                 count: widget.tweet.favList.length,
-                tweet: widget.tweet,
                 fav: widget.fav,
               ),
               IconButton(
