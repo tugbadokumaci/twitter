@@ -13,19 +13,22 @@ import '../utils/format_duration_utils.dart';
 import '../utils/theme_utils.dart';
 
 class TweetListTile extends StatelessWidget {
-  const TweetListTile(
-      {super.key,
-      required this.user,
-      required this.baseViewModel,
-      required this.tweet,
-      required this.fav,
-      required this.favCount});
+  const TweetListTile({
+    super.key,
+    required this.user,
+    required this.baseViewModel,
+    required this.tweet,
+    required this.fav,
+    required this.favCount,
+    required this.onUpdate,
+  });
 
   final UserModel user;
   final BaseViewModel baseViewModel;
   final TweetModel tweet;
   final bool fav;
   final int favCount;
+  final Function(bool fav, int favCount) onUpdate;
 
   @override
   Widget build(BuildContext context) {
@@ -104,8 +107,9 @@ class TweetListTile extends StatelessWidget {
                       ],
                     )),
                 TweetSocialButton(
-                  callback: () {
+                  callback: (bool fav, int count) {
                     baseViewModel.updateFavList(tweet.id);
+                    onUpdate(fav, count);
                   },
                   count: favCount,
                   tweet: tweet,

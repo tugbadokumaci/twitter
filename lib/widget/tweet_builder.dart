@@ -68,6 +68,12 @@ class _TweetBuilderState extends State<TweetBuilder> {
                   tweet: widget.tweet,
                   fav: _isFavorited, // Güncellenmiş fav değerini kullanıyoruz
                   favCount: _favoriteCount, // Güncellenmiş favCount değerini kullanıyoruz
+                  onUpdate: (bool fav, int favCount) {
+                    // setState(() {
+                    _isFavorited = fav;
+                    _favoriteCount = favCount;
+                    // });
+                  },
                 ),
               ),
             );

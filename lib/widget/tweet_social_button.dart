@@ -6,7 +6,7 @@ import '../utils/theme_utils.dart';
 
 class TweetSocialButton extends StatefulWidget {
   final TweetModel tweet;
-  final Function() callback;
+  final Function(bool fav, int count) callback;
   int count;
   bool fav;
   TweetSocialButton({super.key, required this.callback, required this.count, required this.tweet, required this.fav});
@@ -31,7 +31,7 @@ class _TweetSocialButtonState extends State<TweetSocialButton> {
               widget.count++;
             });
           }
-          widget.callback();
+          widget.callback(widget.fav, widget.count);
         },
         child: Row(
           children: [
