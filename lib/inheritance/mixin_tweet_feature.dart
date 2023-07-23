@@ -124,7 +124,7 @@ mixin MixinTweetFeature {
         // location: snapshot['location'],
         favList: snapshot['favList'].cast<String>(),
       );
-      debugPrint("3");
+      // debugPrint("3");
 
       return Resource.success(userModel);
     } catch (e) {
@@ -167,7 +167,7 @@ mixin MixinTweetFeature {
       Map<String, dynamic>? data = docSnapshot.data() as Map<String, dynamic>?;
 
       if (data != null) {
-        debugPrint("bu tweet güncelleniyor: $tweetId KONTROL  1");
+        // debugPrint("bu tweet güncelleniyor: $tweetId KONTROL  1");
         List<String> favList = List<String>.from(data['favList']);
 
         if (favList.contains(Constants.USER.userId)) {
@@ -176,7 +176,7 @@ mixin MixinTweetFeature {
             'favList': FieldValue.arrayRemove([Constants.USER.userId])
           });
           // Constants.USER.favList.removeWhere((element) => element == tweetId);
-          debugPrint("  ve bu kullanıcıyı bu tweet kaydının beğeni listesinden çıkardım KONTROL 2");
+          // debugPrint("  ve bu kullanıcıyı bu tweet kaydının beğeni listesinden çıkardım KONTROL 2");
         } else {
           // User doesn't exist in the favList, add the user
           await docRef.update({

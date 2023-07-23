@@ -25,12 +25,16 @@ class DetailTweetListTile extends StatefulWidget {
     required this.viewModel,
     required this.tweet,
     required this.fav,
+    required this.favCount,
+    required this.onUpdate,
   });
 
   final UserModel user;
   final DetailCubit viewModel;
   final TweetModel tweet;
   bool fav;
+  int favCount;
+  final Function(bool fav, int favCount) onUpdate;
 
   @override
   State<DetailTweetListTile> createState() => _DetailTweetListTileState();
@@ -40,7 +44,7 @@ class _DetailTweetListTileState extends State<DetailTweetListTile> {
   @override
   Widget build(BuildContext context) {
     // bool fav = Constants.USER.favList.contains(widget.tweet.id);
-    int favCount = widget.tweet.favList.length;
+    // int favCount = widget.tweet.favList.length;
 
     return SizedBox(
       child: Column(
@@ -52,13 +56,12 @@ class _DetailTweetListTileState extends State<DetailTweetListTile> {
               widget.user.name,
               style: Theme.of(context).textTheme.titleSmall!.copyWith(fontWeight: FontWeight.bold),
             ),
-            subtitle: Flexible(
-              child: Container(
-                child: Text(
-                  '@${widget.user.username}',
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.titleSmall!.copyWith(color: CustomColors.lightGray),
-                ),
+            subtitle: Container(
+              // dont wrap container with flexible here
+              child: Text(
+                '@${widget.user.username}',
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.titleSmall!.copyWith(color: CustomColors.lightGray),
               ),
             ),
           ),
@@ -149,7 +152,7 @@ class _DetailTweetListTileState extends State<DetailTweetListTile> {
               ),
               Text.rich(
                 TextSpan(
-                  text: favCount.toString(),
+                  text: widget.favCount.toString(),
                   style: Theme.of(context)
                       .textTheme
                       .titleSmall!
@@ -277,21 +280,21 @@ class _DetailTweetListTileState extends State<DetailTweetListTile> {
                   child: Icon(Icons.mode_comment_outlined, size: 20, color: CustomColors.lightGray)),
               TextButton(onPressed: () {}, child: FaIcon(Icons.share, size: 20, color: CustomColors.lightGray)),
               DetailTweetSocialButton(
-                callback: (bool fav, int count) {
-                  widget.viewModel.updateFavList(widget.tweet.id);
-
-                  setState(() {
-                    widget.fav = fav;
-                    widget.tweet.favList.length = count;
-                    // favCount = count;
-                  });
-
-                  // setState(() {
-                  //   favCount = widget.tweet.favList.length;
-                  // });
-                },
-                count: widget.tweet.favList.length,
                 fav: widget.fav,
+                callback: (newFav) {
+                  widget.viewModel.updateFavList(widget.tweet.id);
+                  setState(() {
+                    // Update the favorite state and count
+                    widget.fav = newFav;
+                    if (newFav) {
+                      widget.favCount++;
+                    } else {
+                      widget.favCount--;
+                    }
+                  });
+                  // Call the onUpdate function to propagate the changes to other parts of your code if needed
+                  widget.onUpdate(widget.fav, widget.favCount);
+                },
               ),
               IconButton(
                   onPressed: () {}, icon: Icon(Icons.stacked_bar_chart, size: 20, color: CustomColors.lightGray)),

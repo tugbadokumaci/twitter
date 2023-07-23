@@ -9,26 +9,28 @@ import '../bloc/home_page/home_cubit.dart';
 import '../models/base_view_model.dart';
 import '../models/tweet_model.dart';
 import '../models/user_model.dart';
-import '../utils/constants.dart';
 import '../utils/format_duration_utils.dart';
 import '../utils/theme_utils.dart';
 
 class TweetListTile extends StatelessWidget {
-  const TweetListTile({
-    super.key,
-    required this.user,
-    required this.baseViewModel,
-    required this.tweet,
-  });
+  const TweetListTile(
+      {super.key,
+      required this.user,
+      required this.baseViewModel,
+      required this.tweet,
+      required this.fav,
+      required this.favCount});
 
   final UserModel user;
   final BaseViewModel baseViewModel;
   final TweetModel tweet;
+  final bool fav;
+  final int favCount;
 
   @override
   Widget build(BuildContext context) {
-    bool fav = Constants.USER.favList.contains(tweet.id);
-
+    // bool fav = Constants.USER.favList.contains(tweet.id);
+    debugPrint('tweet list tile is building. fav: $fav- count : $favCount');
     return ListTile(
       leading: CustomCircleAvatar(photoUrl: user.profilePhoto, radius: 25),
       title: Row(
@@ -105,9 +107,10 @@ class TweetListTile extends StatelessWidget {
                   callback: () {
                     baseViewModel.updateFavList(tweet.id);
                   },
-                  count: tweet.favList.length,
+                  count: favCount,
                   tweet: tweet,
-                  fav: Constants.USER.favList.contains(tweet.id),
+                  // fav: Constants.USER.favList.contains(tweet.id),
+                  fav: fav,
                 ),
                 IconButton(
                     onPressed: () {}, icon: Icon(Icons.stacked_bar_chart, size: 20, color: CustomColors.lightGray)),
