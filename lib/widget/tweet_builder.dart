@@ -21,12 +21,14 @@ class TweetBuilder extends StatefulWidget {
 class _TweetBuilderState extends State<TweetBuilder> {
   bool _isFavorited = false; // not used
   int _favoriteCount = 0; //  not used
+  int _commentCount = 0; // not used
 
   @override
   void initState() {
     super.initState();
     _isFavorited = Constants.USER.favList.contains(widget.tweet.id);
     _favoriteCount = widget.tweet.favList.length;
+    _commentCount = widget.tweet.commentCount;
   }
 
   @override
@@ -48,15 +50,17 @@ class _TweetBuilderState extends State<TweetBuilder> {
                   'user': user,
                   'fav': _isFavorited, // Güncellenmiş değeri gönderiyoruz
                   'favCount': _favoriteCount, // Güncellenmiş değeri gönderiyoruz
+                  'commentCount': _commentCount, // Güncellenmiş değeri gönderiyoruz
                 });
 
                 if (result != null && result is Map<String, dynamic>) {
                   // Geri dönüş yapılırken güncellenmiş değerleri alıyoruz
                   setState(() {
                     debugPrint(
-                        'detail donus yaotı. artık _isFavorited: ${result['fav']} - _favoriteCount : ${result['favCount']}}');
+                        'detail donus yaotı. artık _isFavorited: ${result['fav']} - _favoriteCount : ${result['favCount']}} _commentCount : ${result['commentCount']}');
                     _isFavorited = result['fav'] ?? _isFavorited;
                     _favoriteCount = result['favCount'] ?? _favoriteCount;
+                    _commentCount = result['commentCount'] ?? _commentCount;
                   });
                 }
               },
@@ -68,6 +72,7 @@ class _TweetBuilderState extends State<TweetBuilder> {
                   tweet: widget.tweet,
                   fav: _isFavorited, // Güncellenmiş fav değerini kullanıyoruz
                   favCount: _favoriteCount, // Güncellenmiş favCount değerini kullanıyoruz
+                  commentCount: _commentCount, // Güncellenmiş favCount değerini kullanıyoruz
                   onUpdate: (bool fav, int favCount) {
                     // setState(() {
                     _isFavorited = fav;

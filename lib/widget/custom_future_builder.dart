@@ -6,6 +6,7 @@ import 'package:twitter/widget/tweet_builder.dart';
 import '../utils/box_constants.dart';
 
 import '../utils/resource.dart';
+import '../utils/theme_utils.dart';
 import 'box.dart';
 
 class TweetCommentsBottomSheet extends StatelessWidget {
@@ -20,7 +21,11 @@ class TweetCommentsBottomSheet extends StatelessWidget {
       future: baseViewModel.getCommentsByTweetId(tweet.id),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return Center(
+              child: LinearProgressIndicator(
+            color: CustomColors.blue,
+            backgroundColor: CustomColors.lightGray,
+          ));
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (snapshot.hasData) {

@@ -5,6 +5,7 @@ import 'package:twitter/widget/profile_photo_widget.dart';
 import 'package:twitter/widget/tweet_open_bottom_sheet.dart';
 import 'package:twitter/widget/tweet_social_button.dart';
 
+import '../bloc/detail_page/detail_cubit.dart';
 import '../bloc/home_page/home_cubit.dart';
 import '../models/base_view_model.dart';
 import '../models/tweet_model.dart';
@@ -20,6 +21,7 @@ class TweetListTile extends StatelessWidget {
     required this.tweet,
     required this.fav,
     required this.favCount,
+    required this.commentCount,
     required this.onUpdate,
   });
 
@@ -28,12 +30,13 @@ class TweetListTile extends StatelessWidget {
   final TweetModel tweet;
   final bool fav;
   final int favCount;
+  final int commentCount;
   final Function(bool fav, int favCount) onUpdate;
 
   @override
   Widget build(BuildContext context) {
     // bool fav = Constants.USER.favList.contains(tweet.id);
-    debugPrint('tweet list tile is building. fav: $fav- count : $favCount');
+    debugPrint('tweet list tile is building. fav: $fav- count : $favCount commentCount: $commentCount');
     return ListTile(
       leading: CustomCircleAvatar(photoUrl: user.profilePhoto, radius: 25),
       title: Row(
@@ -54,7 +57,7 @@ class TweetListTile extends StatelessWidget {
           ),
           const SizedBox(width: 10),
           Text(
-            baseViewModel is HomeCubit
+            (baseViewModel is HomeCubit || baseViewModel is DetailCubit)
                 ? formatDuration(DateTime.now().difference(tweet.date))
                 : DateFormat('dd MMM yyyy').format(tweet.date),
             overflow: TextOverflow.ellipsis,
@@ -89,7 +92,7 @@ class TweetListTile extends StatelessWidget {
                         Icon(Icons.mode_comment_outlined, size: 20, color: CustomColors.lightGray),
                         const SizedBox(width: 8),
                         Text(
-                          tweet.commentCount.toString(),
+                          commentCount.toString(),
                           style: Theme.of(context).textTheme.titleSmall!.copyWith(color: CustomColors.lightGray),
                         )
                       ],
@@ -101,7 +104,7 @@ class TweetListTile extends StatelessWidget {
                         FaIcon(Icons.share, size: 20, color: CustomColors.lightGray),
                         const SizedBox(width: 8),
                         Text(
-                          tweet.commentCount.toString(),
+                          commentCount.toString(),
                           style: Theme.of(context).textTheme.titleSmall!.copyWith(color: CustomColors.lightGray),
                         )
                       ],

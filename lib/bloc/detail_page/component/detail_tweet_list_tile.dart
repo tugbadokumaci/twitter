@@ -26,6 +26,7 @@ class DetailTweetListTile extends StatefulWidget {
     required this.tweet,
     required this.fav,
     required this.favCount,
+    required this.commentCount,
     required this.onUpdate,
   });
 
@@ -34,7 +35,9 @@ class DetailTweetListTile extends StatefulWidget {
   final TweetModel tweet;
   bool fav;
   int favCount;
-  final Function(bool fav, int favCount) onUpdate;
+  int commentCount;
+
+  final Function(bool fav, int favCount, int commentCount) onUpdate;
 
   @override
   State<DetailTweetListTile> createState() => _DetailTweetListTileState();
@@ -137,14 +140,14 @@ class _DetailTweetListTileState extends State<DetailTweetListTile> {
               ),
               Text.rich(
                 TextSpan(
-                  text: '2',
+                  text: widget.commentCount.toString(),
                   style: Theme.of(context)
                       .textTheme
                       .titleSmall!
                       .copyWith(color: Colors.white, fontWeight: FontWeight.bold),
                   children: <TextSpan>[
                     TextSpan(
-                      text: ' Alıntılar',
+                      text: ' Yorum',
                       style: Theme.of(context).textTheme.titleSmall!.copyWith(color: CustomColors.lightGray),
                     ),
                   ],
@@ -198,7 +201,7 @@ class _DetailTweetListTileState extends State<DetailTweetListTile> {
                   children: [
                     Text.rich(
                       TextSpan(
-                        text: '@${widget.user.name}',
+                        text: '@${widget.user.username}',
                         style: Theme.of(context).textTheme.titleSmall!.copyWith(color: CustomColors.blue),
                         children: <TextSpan>[
                           TextSpan(
@@ -208,7 +211,6 @@ class _DetailTweetListTileState extends State<DetailTweetListTile> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 10),
                     TextFormField(
                       onTapOutside: (event) {
                         FocusScope.of(context).unfocus();
@@ -236,8 +238,11 @@ class _DetailTweetListTileState extends State<DetailTweetListTile> {
                         contentPadding: EdgeInsets.zero,
                       ),
                     ),
-                    Container(
-                      child: widget.viewModel.imageData != null ? ImageContainer(widget.viewModel) : const SizedBox(),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        child: widget.viewModel.imageData != null ? ImageContainer(widget.viewModel) : const SizedBox(),
+                      ),
                     ),
                     Row(
                       mainAxisSize: MainAxisSize.min,
@@ -260,6 +265,12 @@ class _DetailTweetListTileState extends State<DetailTweetListTile> {
                                 style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.white)),
                             onPressed: () {
                               widget.viewModel.sendTweet(context, widget.tweet);
+                              widget.viewModel.getTweetController.text = ''; // drop text setState?????!!!
+                              widget.viewModel.imageData = null; // drop image setState?????!!!
+                              setState(() {
+                                widget.commentCount++;
+                                widget.onUpdate(widget.fav, widget.favCount, widget.commentCount);
+                              });
                             })
                       ],
                     )
@@ -293,7 +304,7 @@ class _DetailTweetListTileState extends State<DetailTweetListTile> {
                     }
                   });
                   // Call the onUpdate function to propagate the changes to other parts of your code if needed
-                  widget.onUpdate(widget.fav, widget.favCount);
+                  widget.onUpdate(widget.fav, widget.favCount, widget.commentCount);
                 },
               ),
               IconButton(
@@ -306,21 +317,33 @@ class _DetailTweetListTileState extends State<DetailTweetListTile> {
   }
 
   Widget ImageContainer(DetailCubit viewModel) {
-    return Stack(
-      children: [
-        Container(
-            alignment: Alignment.center, height: 200, width: 200, child: Image.memory(widget.viewModel.imageData!)),
-        Align(
-          alignment: Alignment.topRight,
-          child: IconButton(
-              onPressed: () {
-                setState(() {
-                  viewModel.imageData = null;
-                });
-              },
-              icon: const Icon(Icons.close, color: Colors.white, size: 30)),
-        ),
-      ],
+    return Container(
+      height: 200,
+      child: Stack(
+        children: [
+          Container(
+              alignment: Alignment.center,
+              height: 200,
+              child: Image.memory(widget.viewModel.imageData!, fit: BoxFit.fitHeight)),
+          Positioned(
+            top: 10.0, // Yatayda aşağı doğru 8.0 birim kaydırma
+            right: 10.0, // Dikeyde sola doğru 8.0 birim kaydırma
+            child: CircleAvatar(
+              radius: 20,
+              backgroundColor: Colors.black54,
+              child: IconButton(
+                onPressed: () {
+                  setState(() {
+                    viewModel.imageData = null;
+                  });
+                },
+                iconSize: 20,
+                icon: const Icon(Icons.close, color: Colors.white),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

@@ -72,12 +72,14 @@ class RouteGenerator {
         UserModel user = arguments['user'] as UserModel;
         bool fav = arguments['fav'] as bool;
         int favCount = arguments['favCount'] as int;
+        int commentCount = arguments['commentCount'] as int;
         return MaterialPageRoute(
             settings: settings,
             builder: (_) => DetailView(
                   tweet: tweet,
                   user: user,
                   fav: fav,
+                  commentCount: commentCount,
                   viewModel: DetailCubit(repo: locator.get<DetailRepository>()),
                   favCount: favCount,
                 ));

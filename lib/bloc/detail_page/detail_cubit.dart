@@ -109,17 +109,19 @@ class DetailCubit extends Cubit<DetailState> implements BaseViewModel {
   // sending tweets from detail cubit is DEFAULTLY has COMMENTTO
   //
   Future<void> sendTweet(BuildContext context, TweetModel tweet) async {
-    emit(DetailLoading());
+    // emit(DetailLoading());
+
     final result =
         await _repo.sendTweet(Constants.USER.userId, getTweetController.text, imageData, commentTo: tweet.id);
-    emit(DetailInitial());
+    // getTweetController.text = ''; // drop text
+    // imageData = null; // drop image
     if (result == true) {
       Fluttertoast.showToast(
         msg: 'Tweet sent successfully',
         backgroundColor: Colors.green,
         gravity: ToastGravity.TOP,
       );
-      emit(DetailSuccess());
+      emit(DetailInitial());
       debugPrint('tweet send succesfully');
     } else {
       debugPrint('error occured while sending the tweet');

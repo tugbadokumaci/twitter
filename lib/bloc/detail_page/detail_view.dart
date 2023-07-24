@@ -15,6 +15,7 @@ class DetailView extends StatelessWidget {
   UserModel user;
   bool _fav;
   int _favCount;
+  int _commentCount;
   DetailCubit viewModel;
   DetailView(
       {super.key,
@@ -22,8 +23,10 @@ class DetailView extends StatelessWidget {
       required this.tweet,
       required this.user,
       required bool fav,
-      required int favCount})
-      : _favCount = favCount,
+      required int favCount,
+      required int commentCount})
+      : _commentCount = commentCount,
+        _favCount = favCount,
         _fav = fav;
 
   @override
@@ -61,10 +64,11 @@ class DetailView extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             // Geri dönüş işlemi yaparken güncellenmiş verileri gönderiyoruz
-            debugPrint('detail view den bildiriyorum.. fav: $_fav - count : $_favCount');
+            debugPrint('detail view den bildiriyorum.. fav: $_fav - count : $_favCount commentCount: $_commentCount');
             Navigator.pop(context, {
               'fav': _fav,
               'favCount': _favCount,
+              'commentCount': _commentCount,
             });
           },
         ),
@@ -80,11 +84,13 @@ class DetailView extends StatelessWidget {
               tweet: tweet,
               fav: _fav,
               favCount: _favCount,
-              onUpdate: (bool fav, int favCount) {
+              commentCount: _commentCount,
+              onUpdate: (bool fav, int favCount, int commentCount) {
                 // setState(() {
-                debugPrint('detail view güncelleniyor fav: $fav : favCount: $favCount');
+                debugPrint('detail view güncelleniyor fav: $fav : favCount: $favCount commentCount: $commentCount');
                 _fav = fav;
                 _favCount = favCount;
+                _commentCount = commentCount;
                 // });
               },
             ),
