@@ -13,7 +13,9 @@ import 'package:twitter/utils/resource.dart';
 
 class DetailCubit extends Cubit<DetailState> implements BaseViewModel {
   final DetailRepository _repo;
+  @override
   late TextEditingController getTweetController;
+  @override
   Uint8List? imageData;
 
   DetailCubit({
@@ -80,6 +82,7 @@ class DetailCubit extends Cubit<DetailState> implements BaseViewModel {
     }
   }
 
+  @override
   Future<Resource<List<TweetModel>>> getCommentsByTweetId(String tweetId) async {
     final result = await _repo.getCommentsByTweetId(tweetId);
     if (result.status == Status.SUCCESS) {
@@ -108,6 +111,7 @@ class DetailCubit extends Cubit<DetailState> implements BaseViewModel {
 */
   // sending tweets from detail cubit is DEFAULTLY has COMMENTTO
   //
+  @override
   Future<void> sendTweet(BuildContext context, TweetModel tweet) async {
     // emit(DetailLoading());
 

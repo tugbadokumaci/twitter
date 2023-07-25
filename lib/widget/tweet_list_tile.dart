@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:twitter/widget/profile_photo_widget.dart';
-import 'package:twitter/widget/tweet_open_bottom_sheet.dart';
-import 'package:twitter/widget/tweet_social_button.dart';
+import 'package:twitter/widget/tweet_comment_button.dart';
+import 'package:twitter/widget/tweet_fav_button.dart';
 
 import '../bloc/detail_page/detail_cubit.dart';
 import '../bloc/home_page/home_cubit.dart';
@@ -14,16 +14,16 @@ import '../utils/format_duration_utils.dart';
 import '../utils/theme_utils.dart';
 
 class TweetListTile extends StatelessWidget {
-  const TweetListTile({
-    super.key,
-    required this.user,
-    required this.baseViewModel,
-    required this.tweet,
-    required this.fav,
-    required this.favCount,
-    required this.commentCount,
-    required this.onUpdate,
-  });
+  const TweetListTile(
+      {super.key,
+      required this.user,
+      required this.baseViewModel,
+      required this.tweet,
+      required this.fav,
+      required this.favCount,
+      required this.commentCount,
+      required this.onUpdate,
+      required this.incrementCommentCountByOne});
 
   final UserModel user;
   final BaseViewModel baseViewModel;
@@ -32,6 +32,7 @@ class TweetListTile extends StatelessWidget {
   final int favCount;
   final int commentCount;
   final Function(bool fav, int favCount) onUpdate;
+  final Function() incrementCommentCountByOne;
 
   @override
   Widget build(BuildContext context) {
@@ -83,20 +84,44 @@ class TweetListTile extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                TextButton(
-                    onPressed: () {
-                      openBottomSheet(context, tweet, baseViewModel);
-                    },
-                    child: Row(
-                      children: [
-                        Icon(Icons.mode_comment_outlined, size: 20, color: CustomColors.lightGray),
-                        const SizedBox(width: 8),
-                        Text(
-                          commentCount.toString(),
-                          style: Theme.of(context).textTheme.titleSmall!.copyWith(color: CustomColors.lightGray),
-                        )
-                      ],
-                    )),
+                TweetCommentButton(
+                  baseViewModel: baseViewModel,
+                  // callback: callback,
+                  tweet: tweet,
+                  user: user,
+                  commentCount: commentCount,
+                  incrementCommentCountByOne: () {
+                    incrementCommentCountByOne();
+                  },
+                ),
+                // TextButton(
+                //     onPressed: () {
+                //       showModalBottomSheet(
+                //         isScrollControlled: true,
+                //         useSafeArea: true,
+                //         context: context,
+                //         builder: (context) {
+                //           return OpenBottomSheet(
+                //             tweet: tweet,
+                //             user: user,
+                //             baseViewModel: baseViewModel,
+                //             incrementCommentCountByOne: () {
+                //               incrementCommentCountByOne();
+                //             },
+                //           );
+                //         },
+                //       );
+                //     },
+                //     child: Row(
+                //       children: [
+                //         Icon(Icons.mode_comment_outlined, size: 20, color: CustomColors.lightGray),
+                //         const SizedBox(width: 8),
+                //         Text(
+                //           commentCount.toString(),
+                //           style: Theme.of(context).textTheme.titleSmall!.copyWith(color: CustomColors.lightGray),
+                //         )
+                //       ],
+                //     )),
                 TextButton(
                     onPressed: () {},
                     child: Row(
@@ -109,7 +134,7 @@ class TweetListTile extends StatelessWidget {
                         )
                       ],
                     )),
-                TweetSocialButton(
+                TweetFavButton(
                   callback: (bool fav, int count) {
                     baseViewModel.updateFavList(tweet.id);
                     onUpdate(fav, count);

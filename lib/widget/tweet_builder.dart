@@ -79,6 +79,11 @@ class _TweetBuilderState extends State<TweetBuilder> {
                     _favoriteCount = favCount;
                     // });
                   },
+                  incrementCommentCountByOne: () {
+                    setState(() {
+                      _commentCount++; // CALLBACK CALLBACK YAPTIRDIĞI DEĞİŞİKLİK
+                    });
+                  },
                 ),
               ),
             );

@@ -3,17 +3,17 @@ import 'package:twitter/models/base_view_model.dart';
 import 'package:twitter/models/tweet_model.dart';
 import 'package:twitter/widget/tweet_builder.dart';
 
-import '../utils/box_constants.dart';
+import '../../../utils/box_constants.dart';
 
-import '../utils/resource.dart';
-import '../utils/theme_utils.dart';
-import 'box.dart';
+import '../../../utils/resource.dart';
+import '../../../utils/theme_utils.dart';
+import '../../../widget/box.dart';
 
-class TweetCommentsBottomSheet extends StatelessWidget {
+class DetailCommentContainer extends StatelessWidget {
   final TweetModel tweet;
   final BaseViewModel baseViewModel;
 
-  const TweetCommentsBottomSheet({super.key, required this.tweet, required this.baseViewModel});
+  const DetailCommentContainer({super.key, required this.tweet, required this.baseViewModel});
 
   @override
   Widget build(BuildContext context) {

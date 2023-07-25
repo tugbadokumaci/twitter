@@ -12,10 +12,17 @@ import 'package:twitter/utils/resource.dart';
 
 class ProfileCubit extends Cubit<ProfileState> implements BaseViewModel {
   final ProfileRepository _repo;
+  @override
+  late TextEditingController getTweetController;
+  @override
+  Uint8List? imageData;
+
   ProfileCubit({
     required ProfileRepository repo,
   })  : _repo = repo,
-        super(ProfileInitial());
+        super(ProfileInitial()) {
+    getTweetController = TextEditingController();
+  }
   // Resource<List<TweetModel>> tweetResource = Resource(status: Status.LOADING, data: null, errorMessage: null);
   // Resource<List<Uint8List>> mediaResource = Resource(status: Status.LOADING, data: null, errorMessage: null);
   // Resource<UserModel> userModel = Resource(status: Status.LOADING, data: null, errorMessage: null);
@@ -141,5 +148,27 @@ class ProfileCubit extends Cubit<ProfileState> implements BaseViewModel {
     }
     debugPrint('base view model getCommentsByTweetId');
     return Resource.error("error");
+  }
+
+//// !!!!!!!!! DÜZGÜN YAPILMADI
+  @override
+  Future<void> sendTweet(BuildContext context, TweetModel tweet) async {
+    // emit(DetailLoading());
+
+    final result =
+        await _repo.sendTweet(Constants.USER.userId, getTweetController.text, imageData, commentTo: tweet.id);
+    // getTweetController.text = ''; // drop text
+    // imageData = null; // drop image
+    if (result == true) {
+      Fluttertoast.showToast(
+        msg: 'Tweet sent successfully',
+        backgroundColor: Colors.green,
+        gravity: ToastGravity.TOP,
+      );
+      emit(ProfileInitial());
+      debugPrint('tweet send succesfully');
+    } else {
+      debugPrint('error occured while sending the tweet');
+    }
   }
 }

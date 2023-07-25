@@ -4,18 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:twitter/models/tweet_model.dart';
 import '../utils/theme_utils.dart';
 
-class TweetSocialButton extends StatefulWidget {
+class TweetFavButton extends StatefulWidget {
   final TweetModel tweet;
   final Function(bool fav, int count) callback;
   int count;
   bool fav;
-  TweetSocialButton({super.key, required this.callback, required this.count, required this.tweet, required this.fav});
+  TweetFavButton({super.key, required this.callback, required this.count, required this.tweet, required this.fav});
 
   @override
-  State<TweetSocialButton> createState() => _TweetSocialButtonState();
+  State<TweetFavButton> createState() => _TweetFavButtonState();
 }
 
-class _TweetSocialButtonState extends State<TweetSocialButton> {
+class _TweetFavButtonState extends State<TweetFavButton> {
   @override
   Widget build(BuildContext context) {
     return TextButton(

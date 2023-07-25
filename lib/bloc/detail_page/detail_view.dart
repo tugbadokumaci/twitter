@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twitter/bloc/detail_page/detail_cubit.dart';
 import 'package:twitter/models/tweet_model.dart';
 import 'package:twitter/utils/theme_utils.dart';
-import 'package:twitter/widget/custom_future_builder.dart';
+import 'package:twitter/bloc/detail_page/component/detail_comment_container.dart';
 import '../../models/user_model.dart';
 import 'component/detail_tweet_list_tile.dart';
 import 'detail_state.dart';
@@ -93,9 +93,12 @@ class DetailView extends StatelessWidget {
                 _commentCount = commentCount;
                 // });
               },
+              incrementCommentCountByOne: () {
+                _commentCount++; // CALLBACK CALLBACK YAPTIRDIĞI DEĞİŞİKLİK
+              },
             ),
             Divider(height: 3, color: CustomColors.lightGray),
-            TweetCommentsBottomSheet(tweet: tweet, baseViewModel: viewModel)
+            DetailCommentContainer(tweet: tweet, baseViewModel: viewModel)
           ],
         ),
       ),

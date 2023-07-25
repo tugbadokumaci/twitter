@@ -115,7 +115,10 @@ class WelcomeView extends StatelessWidget {
                 ),
               ),
               const Box(size: BoxSize.LARGE, type: BoxType.VERTICAL),
-              const Text('Zaten bir hesabın var mı?'),
+              Text(
+                'Zaten bir hesabın var mı?',
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
               const Box(size: BoxSize.SMALL, type: BoxType.VERTICAL),
               MyButtonWidget(
                 context: context,

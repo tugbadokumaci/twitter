@@ -19,16 +19,16 @@ import '../../../utils/theme_utils.dart';
 import '../detail_cubit.dart';
 
 class DetailTweetListTile extends StatefulWidget {
-  DetailTweetListTile({
-    super.key,
-    required this.user,
-    required this.viewModel,
-    required this.tweet,
-    required this.fav,
-    required this.favCount,
-    required this.commentCount,
-    required this.onUpdate,
-  });
+  DetailTweetListTile(
+      {super.key,
+      required this.user,
+      required this.viewModel,
+      required this.tweet,
+      required this.fav,
+      required this.favCount,
+      required this.commentCount,
+      required this.onUpdate,
+      required this.incrementCommentCountByOne});
 
   final UserModel user;
   final DetailCubit viewModel;
@@ -36,7 +36,7 @@ class DetailTweetListTile extends StatefulWidget {
   bool fav;
   int favCount;
   int commentCount;
-
+  final Function() incrementCommentCountByOne;
   final Function(bool fav, int favCount, int commentCount) onUpdate;
 
   @override
@@ -286,7 +286,21 @@ class _DetailTweetListTileState extends State<DetailTweetListTile> {
             children: [
               TextButton(
                   onPressed: () {
-                    openBottomSheet(context, widget.tweet, widget.viewModel);
+                    showModalBottomSheet(
+                      isScrollControlled: true,
+                      useSafeArea: true,
+                      context: context,
+                      builder: (context) {
+                        return OpenBottomSheet(
+                          tweet: widget.tweet,
+                          user: widget.user,
+                          baseViewModel: widget.viewModel,
+                          incrementCommentCountByOne: () {
+                            widget.incrementCommentCountByOne();
+                          },
+                        );
+                      },
+                    );
                   },
                   child: Icon(Icons.mode_comment_outlined, size: 20, color: CustomColors.lightGray)),
               TextButton(onPressed: () {}, child: FaIcon(Icons.share, size: 20, color: CustomColors.lightGray)),

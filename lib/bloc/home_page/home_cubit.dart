@@ -1,5 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:twitter/bloc/home_page/home_state.dart';
 import 'package:twitter/bloc/home_page/home_repository.dart';
 import 'package:twitter/models/user_model.dart';
@@ -11,13 +14,19 @@ import '../../utils/resource.dart';
 
 class HomeCubit extends Cubit<HomeState> implements BaseViewModel {
   final HomeRepository _repo;
+  @override
+  late TextEditingController getTweetController;
+  @override
+  Uint8List? imageData;
 
   // Resource<List<TweetModel>> tweetResource = Resource(status: Status.LOADING, data: null, errorMessage: null);
   late Resource<List<TweetModel>> tweetResource;
   HomeCubit({
     required HomeRepository repo,
   })  : _repo = repo,
-        super(HomeInitial());
+        super(HomeInitial()) {
+    getTweetController = TextEditingController();
+  }
 
   Future<void> getTweetsByUserId(String userId) async {
     emit(HomeLoading());
@@ -98,6 +107,7 @@ class HomeCubit extends Cubit<HomeState> implements BaseViewModel {
     }
   }
 
+  @override
   Future<Resource<List<TweetModel>>> getCommentsByTweetId(String tweetId) async {
     final result = await _repo.getCommentsByTweetId(tweetId);
     if (result.status == Status.SUCCESS) {
@@ -105,5 +115,27 @@ class HomeCubit extends Cubit<HomeState> implements BaseViewModel {
     }
     debugPrint('base view model getCommentsByTweetId');
     return Resource.error("error");
+  }
+
+//// !!!!!!!!! DÜZGÜN YAPILMADI
+  @override
+  Future<void> sendTweet(BuildContext context, TweetModel tweet) async {
+    // emit(DetailLoading());
+
+    final result =
+        await _repo.sendTweet(Constants.USER.userId, getTweetController.text, imageData, commentTo: tweet.id);
+    // getTweetController.text = ''; // drop text
+    // imageData = null; // drop image
+    if (result == true) {
+      Fluttertoast.showToast(
+        msg: 'Tweet sent successfully',
+        backgroundColor: Colors.green,
+        gravity: ToastGravity.TOP,
+      );
+      emit(HomeInitial());
+      debugPrint('tweet send succesfully');
+    } else {
+      debugPrint('error occured while sending the tweet');
+    }
   }
 }
