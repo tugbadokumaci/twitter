@@ -17,17 +17,23 @@ class DetailView extends StatelessWidget {
   int _favCount;
   int _commentCount;
   DetailCubit viewModel;
-  DetailView(
-      {super.key,
-      required this.viewModel,
-      required this.tweet,
-      required this.user,
-      required bool fav,
-      required int favCount,
-      required int commentCount})
-      : _commentCount = commentCount,
+  bool _retweet;
+  int _retweetCount;
+  DetailView({
+    super.key,
+    required this.viewModel,
+    required this.tweet,
+    required this.user,
+    required bool fav,
+    required int favCount,
+    required int commentCount,
+    required bool retweet,
+    required int retweetCount,
+  })  : _commentCount = commentCount,
         _favCount = favCount,
-        _fav = fav;
+        _fav = fav,
+        _retweet = retweet,
+        _retweetCount = retweetCount;
 
   @override
   Widget build(BuildContext context) {
@@ -64,11 +70,14 @@ class DetailView extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             // Geri dönüş işlemi yaparken güncellenmiş verileri gönderiyoruz
-            debugPrint('detail view den bildiriyorum.. fav: $_fav - count : $_favCount commentCount: $_commentCount');
+            debugPrint(
+                'detail view den bildiriyorum.. fav: $_fav - count : $_favCount commentCount: $_commentCount retweetCount: $_retweetCount');
             Navigator.pop(context, {
               'fav': _fav,
               'favCount': _favCount,
               'commentCount': _commentCount,
+              'retweet': _retweet,
+              'retweetCount': _retweetCount,
             });
           },
         ),
@@ -85,7 +94,7 @@ class DetailView extends StatelessWidget {
               fav: _fav,
               favCount: _favCount,
               commentCount: _commentCount,
-              onUpdate: (bool fav, int favCount, int commentCount) {
+              onFavUpdate: (bool fav, int favCount, int commentCount) {
                 // setState(() {
                 debugPrint('detail view güncelleniyor fav: $fav : favCount: $favCount commentCount: $commentCount');
                 _fav = fav;
@@ -96,6 +105,13 @@ class DetailView extends StatelessWidget {
               incrementCommentCountByOne: () {
                 _commentCount++; // CALLBACK CALLBACK YAPTIRDIĞI DEĞİŞİKLİK
               },
+              onRetweetUpdate: (bool retweet, int retweetCount) {
+                debugPrint('detail view güncelleniyor fav: $retweet : retweetCount: $retweetCount');
+                _retweet = retweet;
+                _retweetCount = retweetCount;
+              },
+              retweet: _retweet,
+              retweetCount: _retweetCount,
             ),
             Divider(height: 3, color: CustomColors.lightGray),
             DetailCommentContainer(tweet: tweet, baseViewModel: viewModel)

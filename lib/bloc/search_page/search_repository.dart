@@ -32,6 +32,7 @@ class SearchRepository {
             tweets: (data['tweets'] ?? []).cast<String>(),
             location: data['location'],
             favList: (data['favList'] ?? []).cast<String>(),
+            retweetList: (data['retweetList'] ?? []).cast<String>(),
           ));
         }
       }
@@ -70,6 +71,7 @@ class SearchRepository {
             tweets: (data['tweets'] ?? []).cast<String>(),
             location: data['location'],
             favList: (data['favList'] ?? []).cast<String>(),
+            retweetList: (data['retweetList'] ?? []).cast<String>(),
           ));
         }
       }

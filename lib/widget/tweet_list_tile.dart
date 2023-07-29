@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:twitter/widget/profile_photo_widget.dart';
 import 'package:twitter/widget/tweet_comment_button.dart';
 import 'package:twitter/widget/tweet_fav_button.dart';
+import 'package:twitter/widget/tweet_retweet_button.dart';
+import 'package:twitter/widget/tweet_retweet_conteiner.dart';
 
 import '../bloc/detail_page/detail_cubit.dart';
 import '../bloc/home_page/home_cubit.dart';
@@ -14,16 +15,20 @@ import '../utils/format_duration_utils.dart';
 import '../utils/theme_utils.dart';
 
 class TweetListTile extends StatelessWidget {
-  const TweetListTile(
-      {super.key,
-      required this.user,
-      required this.baseViewModel,
-      required this.tweet,
-      required this.fav,
-      required this.favCount,
-      required this.commentCount,
-      required this.onUpdate,
-      required this.incrementCommentCountByOne});
+  const TweetListTile({
+    super.key,
+    required this.user,
+    required this.baseViewModel,
+    required this.tweet,
+    required this.fav,
+    required this.favCount,
+    required this.commentCount,
+    required this.onFavUpdate,
+    required this.incrementCommentCountByOne,
+    required this.onRetweetUpdate,
+    required this.retweet,
+    required this.retweetCount,
+  });
 
   final UserModel user;
   final BaseViewModel baseViewModel;
@@ -31,127 +36,171 @@ class TweetListTile extends StatelessWidget {
   final bool fav;
   final int favCount;
   final int commentCount;
-  final Function(bool fav, int favCount) onUpdate;
+  final Function(bool fav, int favCount) onFavUpdate;
   final Function() incrementCommentCountByOne;
+  final Function(bool fav, int favCount) onRetweetUpdate;
+  final bool retweet;
+  final int retweetCount;
 
   @override
   Widget build(BuildContext context) {
     // bool fav = Constants.USER.favList.contains(tweet.id);
-    debugPrint('tweet list tile is building. fav: $fav- count : $favCount commentCount: $commentCount');
-    return ListTile(
-      leading: CustomCircleAvatar(photoUrl: user.profilePhoto, radius: 25),
-      title: Row(
-        children: [
-          Text(
-            user.name,
-            style: Theme.of(context).textTheme.titleSmall!.copyWith(fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(width: 10),
-          Flexible(
-            child: Container(
-              child: Text(
-                '@${user.username}',
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.titleSmall!.copyWith(color: CustomColors.lightGray),
-              ),
-            ),
-          ),
-          const SizedBox(width: 10),
-          Text(
-            (baseViewModel is HomeCubit || baseViewModel is DetailCubit)
-                ? formatDuration(DateTime.now().difference(tweet.date))
-                : DateFormat('dd MMM yyyy').format(tweet.date),
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.titleSmall,
-          ),
-        ],
-      ),
-      subtitle: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(tweet.text, style: Theme.of(context).textTheme.titleSmall),
-            const SizedBox(height: 8),
-            Container(
-                child: tweet.imageData != null
-                    ? SizedBox(
-                        height: 200,
-                        width: 300,
-                        child: Image.memory(tweet.imageData!),
-                      )
-                    : const SizedBox()),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    debugPrint(
+        'tweet list tile is building. fav: $fav- count : $favCount commentCount: $commentCount displayRetweetTo: ${tweet.displayRetweetTo} retweetedFrom : ${tweet.retweetedFrom}');
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Divider(color: CustomColors.lightGray),
+        ListTileRetweetContainer(
+          tweet: tweet,
+        ),
+        Container(
+          child: ListTile(
+            leading: CustomCircleAvatar(photoUrl: user.profilePhoto, radius: 25),
+            title: Row(
               children: [
-                TweetCommentButton(
-                  baseViewModel: baseViewModel,
-                  // callback: callback,
-                  tweet: tweet,
-                  user: user,
-                  commentCount: commentCount,
-                  incrementCommentCountByOne: () {
-                    incrementCommentCountByOne();
-                  },
+                Text(
+                  user.name,
+                  style: Theme.of(context).textTheme.titleSmall!.copyWith(fontWeight: FontWeight.bold),
                 ),
-                // TextButton(
-                //     onPressed: () {
-                //       showModalBottomSheet(
-                //         isScrollControlled: true,
-                //         useSafeArea: true,
-                //         context: context,
-                //         builder: (context) {
-                //           return OpenBottomSheet(
-                //             tweet: tweet,
-                //             user: user,
-                //             baseViewModel: baseViewModel,
-                //             incrementCommentCountByOne: () {
-                //               incrementCommentCountByOne();
-                //             },
-                //           );
-                //         },
-                //       );
-                //     },
-                //     child: Row(
-                //       children: [
-                //         Icon(Icons.mode_comment_outlined, size: 20, color: CustomColors.lightGray),
-                //         const SizedBox(width: 8),
-                //         Text(
-                //           commentCount.toString(),
-                //           style: Theme.of(context).textTheme.titleSmall!.copyWith(color: CustomColors.lightGray),
-                //         )
-                //       ],
-                //     )),
-                TextButton(
-                    onPressed: () {},
-                    child: Row(
-                      children: [
-                        FaIcon(Icons.share, size: 20, color: CustomColors.lightGray),
-                        const SizedBox(width: 8),
-                        Text(
-                          commentCount.toString(),
-                          style: Theme.of(context).textTheme.titleSmall!.copyWith(color: CustomColors.lightGray),
-                        )
-                      ],
-                    )),
-                TweetFavButton(
-                  callback: (bool fav, int count) {
-                    baseViewModel.updateFavList(tweet.id);
-                    onUpdate(fav, count);
-                  },
-                  count: favCount,
-                  tweet: tweet,
-                  // fav: Constants.USER.favList.contains(tweet.id),
-                  fav: fav,
+                const SizedBox(width: 10),
+                Flexible(
+                  child: Container(
+                    child: Text(
+                      '@${user.username}',
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.titleSmall!.copyWith(color: CustomColors.lightGray),
+                    ),
+                  ),
                 ),
-                IconButton(
-                    onPressed: () {}, icon: Icon(Icons.stacked_bar_chart, size: 20, color: CustomColors.lightGray)),
+                const SizedBox(width: 10),
+                Text(
+                  (baseViewModel is HomeCubit || baseViewModel is DetailCubit)
+                      ? formatDuration(DateTime.now().difference(tweet.date))
+                      : DateFormat('dd MMM yyyy').format(tweet.date),
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
               ],
             ),
-          ],
+            subtitle: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(tweet.text, style: Theme.of(context).textTheme.titleSmall),
+                  const SizedBox(height: 8),
+                  Container(
+                      child: tweet.imageData != null
+                          ? SizedBox(
+                              height: 200,
+                              width: 300,
+                              child: Image.memory(tweet.imageData!),
+                            )
+                          : const SizedBox()),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      TweetCommentButton(
+                        baseViewModel: baseViewModel,
+                        // callback: callback,
+                        tweet: tweet,
+                        user: user,
+                        commentCount: commentCount,
+                        incrementCommentCountByOne: () {
+                          incrementCommentCountByOne();
+                        },
+                      ),
+                      // TextButton(
+                      //     onPressed: () {
+                      //       showModalBottomSheet(
+                      //         isScrollControlled: true,
+                      //         useSafeArea: true,
+                      //         context: context,
+                      //         builder: (context) {
+                      //           return OpenBottomSheet(
+                      //             tweet: tweet,
+                      //             user: user,
+                      //             baseViewModel: baseViewModel,
+                      //             incrementCommentCountByOne: () {
+                      //               incrementCommentCountByOne();
+                      //             },
+                      //           );
+                      //         },
+                      //       );
+                      //     },
+                      //     child: Row(
+                      //       children: [
+                      //         Icon(Icons.mode_comment_outlined, size: 20, color: CustomColors.lightGray),
+                      //         const SizedBox(width: 8),
+                      //         Text(
+                      //           commentCount.toString(),
+                      //           style: Theme.of(context).textTheme.titleSmall!.copyWith(color: CustomColors.lightGray),
+                      //         )
+                      //       ],
+                      //     )),
+                      TweetRetweetButton(
+                        tweet: tweet,
+                        callback: (bool retweet, int tweetCount) {
+                          baseViewModel.updateRetweetList(context, tweet.id);
+                          onRetweetUpdate(retweet, retweetCount);
+                        },
+                        retweetCount: retweetCount,
+                        retweet: retweet,
+                      ),
+                      // IconButton(
+                      //   onPressed: () {
+                      //     baseViewModel.retweet(context, tweet.id);
+                      //   },
+                      //   icon: Image.asset(
+                      //     'assets/icons/retweet.png', // Replace with the correct path to your image asset
+                      //     width: 24,
+                      //     height: 24,
+                      //     color: CustomColors.lightGray, // You can apply color to the image if needed
+                      //   ),
+                      // ),
+                      TweetFavButton(
+                        callback: (bool fav, int count) {
+                          baseViewModel.updateFavList(tweet.id);
+                          onFavUpdate(fav, count);
+                        },
+                        count: favCount,
+                        tweet: tweet,
+                        // fav: Constants.USER.favList.contains(tweet.id),
+                        fav: fav,
+                      ),
+                      IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.stacked_bar_chart, size: 20, color: CustomColors.lightGray)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            // trailing: Text(userModel.name),
+          ),
         ),
-      ),
-      // trailing: Text(userModel.name),
+      ],
     );
   }
+
+  // Widget retweetContainer(BuildContext context, TweetModel tweet) {
+  //   // USER takip ettikleri bu tweetin retweetedFrom listesinde var mı?
+  //   if (tweet.displayRetweetTo == null) {
+  //     return SizedBox();
+  //   } else {
+  //     return TextButton(
+  //         onPressed: () {
+  //           Navigator.pushNamed(context, '/profile', arguments: '${tweet.displayRetweetTo!.userId}');
+  //         },
+  //         child: Row(
+  //           children: [
+  //             SizedBox(width: 20),
+  //             Image.asset('assets/icons/retweet.png', width: 20, height: 20),
+  //             Text('${tweet.displayRetweetTo!.name} Retweetledi',
+  //                 style: Theme.of(context).textTheme.titleSmall!.copyWith(color: CustomColors.lightGray, fontSize: 15)),
+  //           ],
+  //         ));
+  //   }
+  // }
 }

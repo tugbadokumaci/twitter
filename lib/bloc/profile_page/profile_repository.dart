@@ -73,15 +73,16 @@ class ProfileRepository with MixinTweetFeature {
         }
 
         favTweetList.add(TweetModel(
-          id: tweetsSnapshot.id,
-          date: tweetsSnapshot['date'].toDate(),
-          imageData: imageData,
-          text: tweetsSnapshot['text'],
-          userId: tweetsSnapshot['userId'],
-          favList: List<String>.from(tweetsSnapshot['favList']),
-          commentTo: tweetsSnapshot['commentTo'],
-          commentCount: tweetsSnapshot['commentCount'],
-        ));
+            id: tweetsSnapshot.id,
+            date: tweetsSnapshot['date'].toDate(),
+            imageData: imageData,
+            text: tweetsSnapshot['text'],
+            userId: tweetsSnapshot['userId'],
+            favList: List<String>.from(tweetsSnapshot['favList']),
+            commentTo: tweetsSnapshot['commentTo'],
+            commentCount: tweetsSnapshot['commentCount'],
+            displayRetweetTo: null,
+            retweetedFrom: List<Map<String, dynamic>>.from(tweetsSnapshot['retweetedFrom'])));
       }
       debugPrint('User tweets fetched successfully');
       return Resource.success(favTweetList);

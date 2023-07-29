@@ -131,4 +131,18 @@ class DetailCubit extends Cubit<DetailState> implements BaseViewModel {
       debugPrint('error occured while sending the tweet');
     }
   }
+
+  @override
+  Future<void> updateRetweetList(BuildContext context, String tweetId) async {
+    final result = await _repo.addMeToRetweetList(tweetId);
+    if (result == true) {
+      Fluttertoast.showToast(
+        msg: 'Retweet successfull',
+        backgroundColor: Colors.green,
+        gravity: ToastGravity.TOP,
+      );
+    } else {
+      debugPrint('error occured while retweeting the tweet');
+    }
+  }
 }

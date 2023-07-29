@@ -73,6 +73,8 @@ class RouteGenerator {
         bool fav = arguments['fav'] as bool;
         int favCount = arguments['favCount'] as int;
         int commentCount = arguments['commentCount'] as int;
+        bool retweet = arguments['retweet'] as bool;
+        int retweetCount = arguments['retweetCount'] as int;
         return MaterialPageRoute(
             settings: settings,
             builder: (_) => DetailView(
@@ -80,6 +82,8 @@ class RouteGenerator {
                   user: user,
                   fav: fav,
                   commentCount: commentCount,
+                  retweet: retweet,
+                  retweetCount: retweetCount,
                   viewModel: DetailCubit(repo: locator.get<DetailRepository>()),
                   favCount: favCount,
                 ));

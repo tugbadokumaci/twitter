@@ -4,10 +4,10 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:twitter/bloc/detail_page/component/detail_tweet_social_button.dart';
+import 'package:twitter/bloc/detail_page/component/detail_tweet_fav_button.dart';
+import 'package:twitter/bloc/detail_page/component/detail_tweet_retweet_button.dart';
 import 'package:twitter/utils/button_utils.dart';
 import 'package:twitter/widget/profile_photo_widget.dart';
 import 'package:twitter/widget/tweet_open_bottom_sheet.dart';
@@ -19,16 +19,20 @@ import '../../../utils/theme_utils.dart';
 import '../detail_cubit.dart';
 
 class DetailTweetListTile extends StatefulWidget {
-  DetailTweetListTile(
-      {super.key,
-      required this.user,
-      required this.viewModel,
-      required this.tweet,
-      required this.fav,
-      required this.favCount,
-      required this.commentCount,
-      required this.onUpdate,
-      required this.incrementCommentCountByOne});
+  DetailTweetListTile({
+    super.key,
+    required this.user,
+    required this.viewModel,
+    required this.tweet,
+    required this.fav,
+    required this.favCount,
+    required this.commentCount,
+    required this.onFavUpdate,
+    required this.incrementCommentCountByOne,
+    required this.retweet,
+    required this.retweetCount,
+    required this.onRetweetUpdate,
+  });
 
   final UserModel user;
   final DetailCubit viewModel;
@@ -37,7 +41,10 @@ class DetailTweetListTile extends StatefulWidget {
   int favCount;
   int commentCount;
   final Function() incrementCommentCountByOne;
-  final Function(bool fav, int favCount, int commentCount) onUpdate;
+  final Function(bool fav, int favCount, int commentCount) onFavUpdate;
+  bool retweet;
+  int retweetCount;
+  final Function(bool retweet, int retweetCount) onRetweetUpdate;
 
   @override
   State<DetailTweetListTile> createState() => _DetailTweetListTileState();
@@ -125,7 +132,7 @@ class _DetailTweetListTileState extends State<DetailTweetListTile> {
             children: [
               Text.rich(
                 TextSpan(
-                  text: '17',
+                  text: widget.retweetCount.toString(),
                   style: Theme.of(context)
                       .textTheme
                       .titleSmall!
@@ -269,7 +276,7 @@ class _DetailTweetListTileState extends State<DetailTweetListTile> {
                               widget.viewModel.imageData = null; // drop image setState?????!!!
                               setState(() {
                                 widget.commentCount++;
-                                widget.onUpdate(widget.fav, widget.favCount, widget.commentCount);
+                                widget.onFavUpdate(widget.fav, widget.favCount, widget.commentCount);
                               });
                             })
                       ],
@@ -303,8 +310,24 @@ class _DetailTweetListTileState extends State<DetailTweetListTile> {
                     );
                   },
                   child: Icon(Icons.mode_comment_outlined, size: 20, color: CustomColors.lightGray)),
-              TextButton(onPressed: () {}, child: FaIcon(Icons.share, size: 20, color: CustomColors.lightGray)),
-              DetailTweetSocialButton(
+              DetailTweetRetweetButton(
+                callback: (newRetweet) {
+                  widget.viewModel.updateRetweetList(context, widget.tweet.id);
+                  setState(() {
+                    // Update the favorite state and count
+                    widget.retweet = newRetweet;
+                    if (newRetweet) {
+                      widget.retweetCount++;
+                    } else {
+                      widget.retweetCount--;
+                    }
+                  });
+                  // Call the onUpdate function to propagate the changes to other parts of your code if needed
+                  widget.onRetweetUpdate(widget.retweet, widget.retweetCount);
+                },
+                retweet: widget.retweet,
+              ),
+              DetailTweetFavButton(
                 fav: widget.fav,
                 callback: (newFav) {
                   widget.viewModel.updateFavList(widget.tweet.id);
@@ -318,7 +341,7 @@ class _DetailTweetListTileState extends State<DetailTweetListTile> {
                     }
                   });
                   // Call the onUpdate function to propagate the changes to other parts of your code if needed
-                  widget.onUpdate(widget.fav, widget.favCount, widget.commentCount);
+                  widget.onFavUpdate(widget.fav, widget.favCount, widget.commentCount);
                 },
               ),
               IconButton(

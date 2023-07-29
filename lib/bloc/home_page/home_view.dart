@@ -74,7 +74,12 @@ class HomeView extends StatelessWidget {
   }
 
   Widget _buildLoading() {
-    return Center(child: LinearProgressIndicator(color: CustomColors.blue, backgroundColor: CustomColors.lightGray));
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        LinearProgressIndicator(color: CustomColors.blue, backgroundColor: CustomColors.lightGray),
+      ],
+    );
   }
 
   Widget _buildSuccess(HomeSuccess state) {

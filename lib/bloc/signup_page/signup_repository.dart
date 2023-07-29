@@ -37,6 +37,7 @@ class SignupRepository {
         'location': '',
         'tweets': [],
         'favList': [],
+        'retweetList': [],
       });
       // await FirebaseFirestore.instance.collection('tweets').doc(uid).set({
       //   'favList': [],

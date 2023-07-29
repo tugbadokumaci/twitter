@@ -22,6 +22,8 @@ class _TweetBuilderState extends State<TweetBuilder> {
   bool _isFavorited = false; // not used
   int _favoriteCount = 0; //  not used
   int _commentCount = 0; // not used
+  bool _isRetweeted = false; // not used
+  int _retweetCount = 0; // not used
 
   @override
   void initState() {
@@ -29,6 +31,8 @@ class _TweetBuilderState extends State<TweetBuilder> {
     _isFavorited = Constants.USER.favList.contains(widget.tweet.id);
     _favoriteCount = widget.tweet.favList.length;
     _commentCount = widget.tweet.commentCount;
+    _isRetweeted = Constants.USER.retweetList.contains(widget.tweet.id);
+    _retweetCount = widget.tweet.retweetedFrom.length;
   }
 
   @override
@@ -51,6 +55,8 @@ class _TweetBuilderState extends State<TweetBuilder> {
                   'fav': _isFavorited, // Güncellenmiş değeri gönderiyoruz
                   'favCount': _favoriteCount, // Güncellenmiş değeri gönderiyoruz
                   'commentCount': _commentCount, // Güncellenmiş değeri gönderiyoruz
+                  'retweet': _isRetweeted, // Güncellenmiş değeri gönderiyoruz
+                  'retweetCount': _retweetCount, // Güncellenmiş değeri gönderiyoruz
                 });
 
                 if (result != null && result is Map<String, dynamic>) {
@@ -61,31 +67,39 @@ class _TweetBuilderState extends State<TweetBuilder> {
                     _isFavorited = result['fav'] ?? _isFavorited;
                     _favoriteCount = result['favCount'] ?? _favoriteCount;
                     _commentCount = result['commentCount'] ?? _commentCount;
+                    _isRetweeted = result['retweet'] ?? _isRetweeted;
+                    _retweetCount = result['retweetCount'] ?? _retweetCount;
                   });
                 }
               },
-              child: Padding(
-                padding: const EdgeInsets.only(top: 20.0),
-                child: TweetListTile(
-                  user: user,
-                  baseViewModel: widget.baseViewModel,
-                  tweet: widget.tweet,
-                  fav: _isFavorited, // Güncellenmiş fav değerini kullanıyoruz
-                  favCount: _favoriteCount, // Güncellenmiş favCount değerini kullanıyoruz
-                  commentCount: _commentCount, // Güncellenmiş favCount değerini kullanıyoruz
-                  onUpdate: (bool fav, int favCount) {
-                    // setState(() {
-                    _isFavorited = fav;
-                    _favoriteCount = favCount;
-                    // });
-                  },
-                  incrementCommentCountByOne: () {
-                    setState(() {
-                      _commentCount++; // CALLBACK CALLBACK YAPTIRDIĞI DEĞİŞİKLİK
-                    });
-                  },
-                ),
+              // child: Padding(
+              //   padding: const EdgeInsets.only(top: 20.0),
+              child: TweetListTile(
+                user: user,
+                baseViewModel: widget.baseViewModel,
+                tweet: widget.tweet,
+                fav: _isFavorited, // Güncellenmiş fav değerini kullanıyoruz
+                favCount: _favoriteCount, // Güncellenmiş favCount değerini kullanıyoruz
+                commentCount: _commentCount, // Güncellenmiş favCount değerini kullanıyoruz
+                onFavUpdate: (bool fav, int favCount) {
+                  // setState(() {
+                  _isFavorited = fav;
+                  _favoriteCount = favCount;
+                  // });
+                },
+                incrementCommentCountByOne: () {
+                  setState(() {
+                    _commentCount++; // CALLBACK CALLBACK YAPTIRDIĞI DEĞİŞİKLİK
+                  });
+                },
+                onRetweetUpdate: (bool retweet, int retweetCount) {
+                  _isRetweeted = retweet; // Güncellenmiş retweet değerini kullanıyoruz
+                  _retweetCount = retweetCount; // Güncellenmiş retweetCount değerini kullanıyoruz
+                },
+                retweet: _isRetweeted,
+                retweetCount: _retweetCount,
               ),
+              // ),
             );
           }
           return Container();

@@ -32,14 +32,19 @@ class HomeRepository with MixinTweetFeature {
     try {
       final userSnapshot = await firestore.collection('users').doc(Constants.USER.userId).get();
       final following = userSnapshot['following'].cast<String>();
-      debugPrint(following.toString());
       for (String follow in following) {
-        final result = await getTweetsByUserId(follow);
-        List<TweetModel>? followTweets = result.data;
+        final tweetResult = await getTweetsByUserId(follow);
+        List<TweetModel>? followTweets = tweetResult.data;
         if (followTweets != null) {
           homePageTweets.addAll(followTweets);
         }
+        final retweetResult = await getFollowingsRetweetsByUserId(follow);
+        List<TweetModel>? retweetTweets = retweetResult.data;
+        if (retweetTweets != null) {
+          homePageTweets.addAll(retweetTweets);
+        }
       }
+      // ŞU AN RETWEET EDİLMİŞ TWEETLERİ TWEET ZAMANINA GÖRE SIRALIYOR RETWEET ZAMANINA GÖRE DEĞİL
       homePageTweets.sort((a, b) => b.date.compareTo(a.date));
       return Resource.success(homePageTweets);
     } catch (e) {

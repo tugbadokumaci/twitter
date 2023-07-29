@@ -29,6 +29,7 @@ class LoginRepository {
       List<String> following = snapshot['following'].cast<String>();
       List<String> tweets = snapshot['tweets'].cast<String>();
       List<String> favList = snapshot['favList'].cast<String>();
+      List<String> retweetList = snapshot['retweetList'].cast<String>();
 
       return Resource.success(UserModel(
         email: email,
@@ -44,6 +45,7 @@ class LoginRepository {
         following: following,
         tweets: tweets,
         favList: favList,
+        retweetList: retweetList,
       ));
     } on FirebaseAuthException catch (e) {
       debugPrint(e.message);

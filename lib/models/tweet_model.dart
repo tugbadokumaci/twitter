@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+import 'package:twitter/models/user_model.dart';
+
 class TweetModel {
   String id;
   DateTime date;
@@ -9,6 +11,8 @@ class TweetModel {
   String userId;
   String commentTo;
   int commentCount;
+  UserModel? displayRetweetTo;
+  List<Map<String, dynamic>> retweetedFrom;
   // Duration timeDifference;
 
   TweetModel({
@@ -21,5 +25,7 @@ class TweetModel {
     // this.timeDifference = Duration.zero, // fill while fetching before sending to view
     required this.commentTo,
     required this.commentCount,
+    required this.displayRetweetTo,
+    required this.retweetedFrom,
   });
 }

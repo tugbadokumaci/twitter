@@ -48,7 +48,8 @@ class TweetCommentButton extends StatelessWidget {
         },
         child: Row(
           children: [
-            Icon(Icons.mode_comment_outlined, size: 20, color: CustomColors.lightGray),
+            // Icon(Icons.mode_comment_outlined, size: 20, color: CustomColors.lightGray),
+            Image.asset('assets/icons/comment.png', width: 20, height: 20),
             const SizedBox(width: 8),
             Text(
               commentCount.toString(),

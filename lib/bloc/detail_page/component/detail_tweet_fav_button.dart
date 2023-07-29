@@ -1,17 +1,16 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
-import 'package:twitter/models/tweet_model.dart';
 import '../../../utils/theme_utils.dart';
 
-class DetailTweetSocialButton extends StatelessWidget {
+class DetailTweetFavButton extends StatelessWidget {
   final Function(bool fav) callback;
   bool fav;
-  DetailTweetSocialButton({super.key, required this.callback, required this.fav});
+  DetailTweetFavButton({super.key, required this.callback, required this.fav});
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('DetailTweetSocialButton - fav - $fav');
+    // debugPrint('DetailTweetFavButton - fav - $fav');
     return IconButton(
         onPressed: () {
           callback(!fav);

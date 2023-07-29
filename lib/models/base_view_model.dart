@@ -13,6 +13,7 @@ abstract class BaseViewModel {
   Future<void> updateFavList(String tweetId);
   Future<Resource<List<TweetModel>>> getCommentsByTweetId(String tweetId);
   Future<void> sendTweet(BuildContext context, TweetModel tweet);
+  Future<void> updateRetweetList(BuildContext context, String tweetId);
 
   // Future<Resource<List<TweetModel>>> getCommentsByTweetId(String tweetId) async {
   //   final result = await baseViewModel.getCommentsByTweetId(tweetId);

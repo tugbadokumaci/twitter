@@ -9,10 +9,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:twitter/bloc/tweet_page/tweet_cubit.dart';
 import 'package:twitter/bloc/tweet_page/tweet_state.dart';
 import 'package:twitter/inheritance/app_style.dart';
-import 'package:twitter/utils/button_utils.dart';
 import 'package:twitter/widget/profile_photo_widget.dart';
 
-import '../../Navbar.dart';
 import '../../utils/constants.dart';
 import '../../utils/theme_utils.dart';
 
@@ -140,10 +138,14 @@ class _TweetViewState extends State<TweetView> {
   }
 
   Widget _buildLoading() {
-    return Center(
-        child: CircularProgressIndicator(
-      color: CustomColors.blue,
-      backgroundColor: CustomColors.lightGray,
-    ));
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        CircularProgressIndicator(
+          color: CustomColors.blue,
+          backgroundColor: CustomColors.lightGray,
+        ),
+      ],
+    );
   }
 }

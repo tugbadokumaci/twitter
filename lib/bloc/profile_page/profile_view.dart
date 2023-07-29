@@ -126,14 +126,14 @@ class ProfileView extends StatelessWidget {
             ),
           ),
           body: SingleChildScrollView(
-            child: Container(
-              height: MediaQuery.of(context).size.height,
-              child: Center(
-                child: LinearProgressIndicator(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                LinearProgressIndicator(
                   color: CustomColors.blue,
                   backgroundColor: CustomColors.lightGray,
                 ),
-              ),
+              ],
             ),
           )),
     );
@@ -144,7 +144,7 @@ class ProfileView extends StatelessWidget {
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text(state.userModel.data!.name,
-            style: Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold)),
+            style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold)),
         centerTitle: false,
       ),
       backgroundColor: Colors.black,

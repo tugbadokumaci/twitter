@@ -13,6 +13,7 @@ class UserModel {
   List<String> tweets; // user ın tweet id tutan array
   String location;
   List<String> favList;
+  List<String> retweetList;
 
   UserModel({
     required this.email,
@@ -29,6 +30,7 @@ class UserModel {
     this.location = '',
     required this.tweets,
     required this.favList,
+    required this.retweetList,
   });
 
   @override

@@ -20,6 +20,7 @@ class Constants {
     followers: [],
     tweets: [],
     favList: [],
+    retweetList: [],
   );
 }
 

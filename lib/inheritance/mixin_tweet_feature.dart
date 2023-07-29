@@ -28,6 +28,8 @@ mixin MixinTweetFeature {
         'favList': [],
         'commentTo': commentTo,
         'commentCount': 0,
+        'displayRetweetTo': null,
+        'retweetedFrom': [],
       });
       // if tweet is sending from detail cubit ( as a comment)
       if (commentTo != '') {
@@ -63,6 +65,57 @@ mixin MixinTweetFeature {
     }
   }
 
+  Future<bool> addMeToRetweetList(String tweetId) async {
+    DateTime retweetingTime = DateTime.now();
+
+    try {
+      final tweetRef = firestore.collection('tweets').doc(tweetId);
+      final userRef = firestore.collection('users').doc(Constants.USER.userId);
+      final tweetDoc = await tweetRef.get();
+      final userDoc = await userRef.get();
+      List<Map<String, dynamic>>? retweetedFrom = List<Map<String, dynamic>>.from(tweetDoc.data()?['retweetedFrom']);
+      final newRetweetList = userDoc.data()!['retweetList'];
+
+      // List<Map<String, dynamic>>.from(doc['retweetedFrom']);
+      bool flag = false;
+      for (int i = 0; i < retweetedFrom.length; i++) {
+        var map = retweetedFrom[i];
+        if (map['userId'] == Constants.USER.userId) {
+          flag = true;
+          // zaten retweetli ise
+          // tweet db bu tweeti retweetleyenlerden beni çıkar
+          // local/ db user benim retweetlediklerimden bu tweeti çıkar.
+          retweetedFrom.removeAt(i);
+          Constants.USER.retweetList.remove(tweetId);
+          newRetweetList.remove(tweetId);
+          break;
+        }
+      }
+      if (flag == false) {
+        // retweetli değilse
+        if (retweetedFrom == null || retweetedFrom == []) {
+          retweetedFrom = [
+            {'userId': Constants.USER.userId, 'retweetingTime': retweetingTime}
+          ];
+          Constants.USER.retweetList.add(tweetId);
+          newRetweetList.add(tweetId);
+        } else {
+          retweetedFrom.add({'userId': Constants.USER.userId, 'retweetingTime': retweetingTime});
+          Constants.USER.retweetList.add(tweetId);
+          newRetweetList.add(tweetId);
+        }
+      }
+      await userRef.update({'retweetList': newRetweetList});
+      await tweetRef.update({'retweetedFrom': retweetedFrom});
+
+      // Artık bu tweet benim tarafımdan basarıyla retweet lendi.
+      return true;
+    } catch (e) {
+      print('Mixin Tweet feature - addMeToRetweetList - Error fetching retweet list: $e');
+      return false;
+    }
+  }
+
   Future<Resource<List<TweetModel>>> getTweetsByUserId(String userId) async {
     List<TweetModel> tweetList = [];
     try {
@@ -90,7 +143,8 @@ mixin MixinTweetFeature {
           userId: doc['userId'],
           id: doc.id,
           commentTo: doc['commentTo'],
-          commentCount: doc['commentCount'],
+          commentCount: doc['commentCount'], displayRetweetTo: null,
+          retweetedFrom: List<Map<String, dynamic>>.from(doc['retweetedFrom']),
         );
 
         tweetList.add(tweet);
@@ -99,6 +153,62 @@ mixin MixinTweetFeature {
       return Resource.success(tweetList);
     } catch (e) {
       debugPrint('fetching error while getting Tweets By User Id $e');
+      return Resource.error(e.toString());
+    }
+  }
+
+  Future<Resource<List<TweetModel>>> getFollowingsRetweetsByUserId(String userId) async {
+    List<TweetModel> retweetList = [];
+    try {
+      final snapshot = await firestore.collection('tweets').get();
+
+      for (var doc in snapshot.docs) {
+        // final data = doc.data();
+
+        final String tweetId = doc.id;
+        final String imageFileName = 'tweet_image_$tweetId.jpg';
+        Uint8List? imageData;
+        UserModel retweetUser;
+        try {
+          final ref = storage.ref().child(imageFileName);
+          final url = await ref.getDownloadURL();
+          imageData = await ref.getData();
+        } catch (e) {
+          debugPrint('tweet without an image');
+        }
+        List<Map<String, dynamic>> retweetedFrom = List<Map<String, dynamic>>.from(doc['retweetedFrom']);
+        // eğer db deki bu tweet için retweetedFrom içinde following m varsa bu tweeti ana sayfama ekle(not: takip ettiğim farklı kişiler aynı tweeti retweetlerse ben birçok kere ana sayfamda göreceğim )
+        for (String follow in Constants.USER.following) {
+          for (var map in retweetedFrom) {
+            if (map['userId'] == follow) {
+              final result = await getUserModelById(follow);
+              if (result.status == Status.SUCCESS) {
+                retweetUser = result.data!;
+                TweetModel tweet = TweetModel(
+                  date: doc['date'].toDate(), // data comes in datetime
+                  favList: List<String>.from(doc['favList']),
+                  imageData: imageData,
+                  text: doc['text'],
+                  userId: doc['userId'],
+                  id: doc.id,
+                  commentTo: doc['commentTo'],
+                  commentCount: doc['commentCount'],
+                  displayRetweetTo: retweetUser,
+                  retweetedFrom: List<Map<String, dynamic>>.from(doc['retweetedFrom']),
+                );
+
+                retweetList.add(tweet);
+              } else {
+                debugPrint('user model returned error');
+              }
+            }
+          }
+        }
+      }
+      debugPrint('User tweets fetched successfully');
+      return Resource.success(retweetList);
+    } catch (e) {
+      debugPrint('fetching error while getting getFollowingsRetweetsByUserId $e');
       return Resource.error(e.toString());
     }
   }
@@ -123,6 +233,7 @@ mixin MixinTweetFeature {
         tweets: snapshot['tweets'].cast<String>(),
         // location: snapshot['location'],
         favList: snapshot['favList'].cast<String>(),
+        retweetList: snapshot['retweetList'].cast<String>(),
       );
       // debugPrint("3");
 
@@ -150,6 +261,7 @@ mixin MixinTweetFeature {
         'tweets': userModel.tweets,
         'favList': userModel.favList,
         'location': userModel.location,
+        'retweetList': userModel.retweetList
       };
       await docRef.set(userData);
 
@@ -215,6 +327,8 @@ mixin MixinTweetFeature {
           id: doc.id,
           commentTo: doc['commentTo'],
           commentCount: doc['commentCount'],
+          displayRetweetTo: null,
+          retweetedFrom: List<Map<String, dynamic>>.from(doc['retweetedFrom']),
         );
 
         commentList.add(tweet);
